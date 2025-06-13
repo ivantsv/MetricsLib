@@ -22,7 +22,7 @@ public:
     
     bool Write(const std::string& text);
 
-    bool IsRunning() const;
+    bool IsRunning() const noexcept;
 
 private:
     std::string filename_;
@@ -36,7 +36,7 @@ private:
     std::atomic<bool> should_stop_;
     std::thread writer_thread_;
 
-    void WriterLoop();
+    void WriterLoop() noexcept;
     
     AsyncWriter(const AsyncWriter&) = delete;
     AsyncWriter& operator=(const AsyncWriter&) = delete;

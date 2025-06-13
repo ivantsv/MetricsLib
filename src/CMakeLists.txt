@@ -1,3 +1,7 @@
+include(FetchContent)
+
+set(BUILD_SHARED_LIBS OFF)
+
 cmake_minimum_required(VERSION 3.10)
 
 add_library(

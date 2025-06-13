@@ -1,3 +1,7 @@
 description.txt
 
 build/
+
+compile_commands.json
+
+.cache/

@@ -73,11 +73,11 @@ bool AsyncWriter::Write(const std::string& text) {
     return true;
 }
 
-bool AsyncWriter::IsRunning() const {
+bool AsyncWriter::IsRunning() const noexcept {
     return running_;
 }
 
-void AsyncWriter::WriterLoop() {
+void AsyncWriter::WriterLoop() noexcept {
     while (!should_stop_) {
         std::unique_lock<std::mutex> lock(queue_mutex_);
         
