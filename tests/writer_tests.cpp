@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "MultiThreadWriter/Writer.h"
-#include "MultiThreadWriter/WriterUtils.h"
+#include "../src/MultiThreadWriter/Writer.h"
+#include "../src/MultiThreadWriter/WriterUtils.h"
 #include <fstream>
 #include <thread>
 #include <chrono>
@@ -151,7 +151,7 @@ TEST_F(AsyncWriterTest, ConcurrentWrites) {
             for (int j = 0; j < messages_per_thread; ++j) {
                 std::string message = "Thread_" + std::to_string(i) + "_Message_" + std::to_string(j);
                 EXPECT_TRUE(writer.Write(message));
-                std::this_thread::sleep_for(1ms); // Небольшая задержка для имитации работы
+                std::this_thread::sleep_for(1ms);
             }
         });
     }
@@ -248,7 +248,7 @@ TEST_F(AsyncWriterTest, LargeStringWrite) {
     writer.Stop();
     
     std::string content = ReadFileContent();
-    EXPECT_EQ(content.size(), large_string.size() + 1); // +1 для \n
+    EXPECT_EQ(content.size(), large_string.size() + 1);
     EXPECT_EQ(content.substr(0, large_string.size()), large_string);
 }
 
