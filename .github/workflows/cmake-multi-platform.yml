@@ -55,11 +55,12 @@ jobs:
 
     - name: Configure CMake
       run: |
-        if ("${{ runner.os }}" == 'Windows') {
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
+        if ("${{ runner.os }}" -eq "Windows") {
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake"
         } else {
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
         }
+
 
     - name: Build Project
       run: cmake --build build --config Release -j
