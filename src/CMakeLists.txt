@@ -1,12 +1,13 @@
 include(FetchContent)
 
 cmake_minimum_required(VERSION 3.10)
+set(HDR_LOG_REQUIRED OFF CACHE BOOL "HDR Logging component required" FORCE)
 
 FetchContent_Declare(
     hdr_histogram
     GIT_REPOSITORY https://github.com/HdrHistogram/HdrHistogram_c
     GIT_TAG 0.11.8
-    CMAKE_ARGS -DHDR_HISTOGRAM_BUILD_SHARED=OFF -DHDR_LOG_REQUIRED=OFF
+    CMAKE_ARGS -DHDR_HISTOGRAM_BUILD_SHARED=OFF
 )
 FetchContent_MakeAvailable(hdr_histogram)
 
