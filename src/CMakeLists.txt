@@ -6,7 +6,7 @@ FetchContent_Declare(
     hdr_histogram
     GIT_REPOSITORY https://github.com/HdrHistogram/HdrHistogram_c
     GIT_TAG 0.11.8
-    CMAKE_ARGS -DHDR_HISTOGRAM_BUILD_SHARED=OFF
+    CMAKE_ARGS -DHDR_HISTOGRAM_BUILD_SHARED=OFF -DHDR_LOG_REQUIRED=OFF
 )
 FetchContent_MakeAvailable(hdr_histogram)
 
