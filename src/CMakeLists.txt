@@ -1,7 +1,5 @@
 include(FetchContent)
 
-set(BUILD_SHARED_LIBS OFF)
-
 cmake_minimum_required(VERSION 3.10)
 
 FetchContent_Declare(
@@ -41,7 +39,7 @@ target_link_libraries(NonBlockingWriter PUBLIC Threads::Threads)
 target_compile_features(NonBlockingWriter PUBLIC cxx_std_23)
 target_compile_features(IMetrics PUBLIC cxx_std_23)
 
-target_link_libraries(IMetrics PUBLIC hdr_histogram_static)
+target_link_libraries(IMetrics PUBLIC hdr_histogram)
 
 target_compile_options(
     NonBlockingWriter PRIVATE
