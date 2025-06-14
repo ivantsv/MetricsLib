@@ -5,6 +5,7 @@
 #include <chrono>
 #include <set>
 #include <memory>
+#include <algorithm>
 #include "../src/IMetrics/IncrementMetric.h"
 
 class IncrementMetricTest : public ::testing::Test {
