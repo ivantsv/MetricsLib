@@ -29,12 +29,20 @@ std::string LatencyMetric::GetName() const noexcept {
 }
 
 std::string LatencyMetric::GetValueAsString() const {
-    std::lock_guard<std::mutex> lock(mutex_);
+    double p90, p95, p99, p999;
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        p90 = hdr_value_at_percentile(histogram_, 90.0);
+        p95 = hdr_value_at_percentile(histogram_, 95.0);
+        p99 = hdr_value_at_percentile(histogram_, 99.0);
+        p999 = hdr_value_at_percentile(histogram_, 99.9);
+    }
+    
     std::ostringstream oss;
-    oss << "P90: " << GetPercentile(90.0) << "ns, ";
-    oss << "P95: " << GetPercentile(95.0) << "ns, ";
-    oss << "P99: " << GetPercentile(99.0) << "ns, ";
-    oss << "P999: " << GetPercentile(99.9) << "ns";
+    oss << "P90: " << p90 << "ns, ";
+    oss << "P95: " << p95 << "ns, ";
+    oss << "P99: " << p99 << "ns, ";
+    oss << "P999: " << p999 << "ns";
     return oss.str();
 }
 
@@ -43,8 +51,4 @@ void LatencyMetric::Evaluate() {}
 void LatencyMetric::Reset() {
     std::lock_guard<std::mutex> lock(mutex_);
     hdr_reset(histogram_);
-}
-
-double LatencyMetric::GetPercentile(double percentile) const {
-    return hdr_value_at_percentile(histogram_, percentile);
 }

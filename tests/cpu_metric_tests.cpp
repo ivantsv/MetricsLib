@@ -1,4 +1,4 @@
-#include "IMetrics/CPUMetric.h"
+#include "IMetrics/CPUUtilMetric.h"
 
 #include <gtest/gtest.h>
 #include <thread>

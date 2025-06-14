@@ -21,7 +21,5 @@ namespace Metrics {
  private:
     hdr_histogram* histogram_;
     mutable std::mutex mutex_;
-    
-    double GetPercentile(double percentile) const;
  };
 } 

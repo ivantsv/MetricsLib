@@ -20,12 +20,14 @@ add_library(
 add_library(
     IMetrics
     IMetrics/IMetrics.h
-    IMetrics/CPUMetric.h
+    IMetrics/CPUUtilMetric.h
     IMetrics/HTTPIncomeMetric.h
-    IMetrics/CPUMetric.cpp
+    IMetrics/CPUUtilMetric.cpp
     IMetrics/HTTPIncomeMetric.cpp
     IMetrics/LatencyMetric.h
     IMetrics/LatencyMetric.cpp
+    IMetrics/CPUUsageMetric.h
+    IMetrics/CPUUsageMetric.cpp
 )
 
 target_include_directories(
