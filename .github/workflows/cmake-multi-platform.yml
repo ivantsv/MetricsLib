@@ -55,8 +55,7 @@ jobs:
 
     - name: Configure CMake
       run: |
-        # В зависимости от ОС, передаем или не передаем CMAKE_TOOLCHAIN_FILE
-        if ("${{ runner.os }}" == "Windows") {
+        if ("${{ runner.os }}" == 'Windows') {
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
         } else {
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
