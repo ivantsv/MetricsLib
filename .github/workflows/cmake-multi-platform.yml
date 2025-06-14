@@ -48,13 +48,19 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
       
     - name: Install vcpkg dependencies
+      if: runner.os == 'Windows'
       run: |
         git clone https://github.com/microsoft/vcpkg.git
         .\vcpkg\bootstrap-vcpkg.bat
         .\vcpkg\vcpkg.exe install zlib
 
-    - name: Configure CMake
-      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+    - name: Configure CMake (Ubuntu)
+      if: runner.os == 'Linux'
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+      
+    - name: Configure CMake (Windows)
+      if: runner.os == 'Windows'
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
 
     - name: Build Project
       run: cmake --build build --config Release -j
