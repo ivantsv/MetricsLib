@@ -10,7 +10,7 @@ LatencyMetric::LatencyMetric() {
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t max_latency_ns = 3600000000000;
     if (hdr_init(1, max_latency_ns, 3, &histogram_) != 0) {
-        throw std::runtime_error("Error during LatencyMetric creation");
+        throw std::runtime_error("Error during LatencyMetric creation.");
     }
 }
 
@@ -46,6 +46,5 @@ void LatencyMetric::Reset() {
 }
 
 double LatencyMetric::GetPercentile(double percentile) const {
-    std::lock_guard<std::mutex> lock(mutex_);
     return hdr_value_at_percentile(histogram_, percentile);
 }
