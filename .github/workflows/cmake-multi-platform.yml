@@ -53,14 +53,13 @@ jobs:
         .\vcpkg\bootstrap-vcpkg.bat
         .\vcpkg\vcpkg.exe install zlib:x64-windows-static
 
-    - name: Configure CMake
-      run: |
-        if ("${{ runner.os }}" -eq "Windows") {
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake"
-        } else {
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
-        }
+    - name: Configure CMake (Linux)
+      if: runner.os == 'Linux'
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 
+    - name: Configure CMake (Windows)
+      if: runner.os == 'Windows'
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake"
 
     - name: Build Project
       run: cmake --build build --config Release -j
