@@ -45,9 +45,22 @@ jobs:
     - name: Setup MSVC (Windows)
       if: runner.os == 'Windows'
       uses: microsoft/setup-msbuild@v1.1
+      
+    - name: Install vcpkg and zlib (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git
+        .\vcpkg\bootstrap-vcpkg.bat
+        .\vcpkg\vcpkg.exe install zlib:x64-windows-static
 
     - name: Configure CMake
-      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+      run: |
+        # В зависимости от ОС, передаем или не передаем CMAKE_TOOLCHAIN_FILE
+        if ("${{ runner.os }}" == "Windows") {
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
+        } else {
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+        }
 
     - name: Build Project
       run: cmake --build build --config Release -j
