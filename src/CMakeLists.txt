@@ -6,6 +6,7 @@ FetchContent_Declare(
     hdr_histogram
     GIT_REPOSITORY https://github.com/HdrHistogram/HdrHistogram_c
     GIT_TAG 0.11.8
+    CMAKE_ARGS -DHDR_HISTOGRAM_BUILD_SHARED=OFF
 )
 FetchContent_MakeAvailable(hdr_histogram)
 
@@ -39,7 +40,7 @@ target_link_libraries(NonBlockingWriter PUBLIC Threads::Threads)
 target_compile_features(NonBlockingWriter PUBLIC cxx_std_23)
 target_compile_features(IMetrics PUBLIC cxx_std_23)
 
-target_link_libraries(IMetrics PUBLIC hdr_histogram)
+target_link_libraries(IMetrics PUBLIC hdr_histogram_static)
 
 target_compile_options(
     NonBlockingWriter PRIVATE
