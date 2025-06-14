@@ -16,8 +16,8 @@ namespace Metrics {
         IMetric(const IMetric& other) = delete;
         IMetric(IMetric&& other) = delete;
         
-        IMetric& operator=(const IMetric& other) = delete;
-        IMetric&& operator=(IMetric&& other) = delete;
+        virtual IMetric& operator=(const IMetric& other) = delete;
+        virtual IMetric&& operator=(IMetric&& other) = delete;
     };
 }
 

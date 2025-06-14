@@ -28,6 +28,8 @@ add_library(
     IMetrics/LatencyMetric.cpp
     IMetrics/CPUUsageMetric.h
     IMetrics/CPUUsageMetric.cpp
+    IMetrics/CodeTimeMetric.h
+    IMetrics/CodeTimeMetric.cpp
 )
 
 target_include_directories(

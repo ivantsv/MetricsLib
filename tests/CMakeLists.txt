@@ -86,6 +86,20 @@ target_link_libraries(
 
 target_include_directories(cpu_usage_metric_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
+add_executable(
+    code_time_tests
+    code_time_tests.cpp
+)
+
+target_link_libraries(
+    code_time_tests
+    GTest::gtest_main
+    GTest::gmock_main
+    IMetrics
+)
+
+target_include_directories(code_time_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
+
 include(GoogleTest)
 
 gtest_discover_tests(cpu_metric_tests)
@@ -93,3 +107,4 @@ gtest_discover_tests(writer_tests)
 gtest_discover_tests(http_income_tests)
 gtest_discover_tests(latency_metric_tests)
 gtest_discover_tests(cpu_usage_metric_tests)
+gtest_discover_tests(code_time_tests)
