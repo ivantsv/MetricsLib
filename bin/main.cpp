@@ -38,19 +38,19 @@ int main() {
     Metrics::CPUMetric cpu_metric;
     std::atomic<bool> should_stop{false};
     
-    cpu_metric.evaluate();
-    NonBlockingWriter::WriterUtils::writeMetricWithTimestamp(writer, "INITIAL_" + cpu_metric.getName(), cpu_metric.getValueAsString());
+    cpu_metric.Evaluate();
+    NonBlockingWriter::WriterUtils::WriteMetricWithTimestamp(writer, "INITIAL_" + cpu_metric.GetName(), cpu_metric.GetValueAsString());
     
     std::thread light_load_thread([&]() {
         for (int i = 0; i < 20 && !should_stop; ++i) {
             cpu_intensive_work(200, should_stop);
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
             
-            cpu_metric.evaluate();
-            NonBlockingWriter::WriterUtils::writeMetricWithTimestamp(
+            cpu_metric.Evaluate();
+            NonBlockingWriter::WriterUtils::WriteMetricWithTimestamp(
                 writer, 
-                "LIGHT_LOAD_" + cpu_metric.getName(), 
-                cpu_metric.getValueAsString()
+                "LIGHT_LOAD_" + cpu_metric.GetName(), 
+                cpu_metric.GetValueAsString()
             );
         }
     });
@@ -62,11 +62,11 @@ int main() {
             cpu_intensive_work(800, should_stop);
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             
-            cpu_metric.evaluate();
-            NonBlockingWriter::WriterUtils::writeMetricWithTimestamp(
+            cpu_metric.Evaluate();
+            NonBlockingWriter::WriterUtils::WriteMetricWithTimestamp(
                 writer, 
-                "HEAVY_LOAD_" + cpu_metric.getName(), 
-                cpu_metric.getValueAsString()
+                "HEAVY_LOAD_" + cpu_metric.GetName(), 
+                cpu_metric.GetValueAsString()
             );
         }
     });
@@ -75,14 +75,14 @@ int main() {
         for (int i = 0; i < 30 && !should_stop; ++i) {
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             
-            cpu_metric.evaluate();
-            NonBlockingWriter::WriterUtils::writeMetric(
+            cpu_metric.Evaluate();
+            NonBlockingWriter::WriterUtils::WriteMetric(
                 writer, 
-                "MONITOR_" + cpu_metric.getName(), 
-                cpu_metric.getValueAsString()
+                "MONITOR_" + cpu_metric.GetName(), 
+                cpu_metric.GetValueAsString()
             );
 
-            std::cout << "Current CPU: " << cpu_metric.getValueAsString() << std::endl;
+            std::cout << "Current CPU: " << cpu_metric.GetValueAsString() << std::endl;
         }
     });
   
@@ -98,11 +98,11 @@ int main() {
         cpu_intensive_work(work_time, should_stop);
         std::this_thread::sleep_for(std::chrono::milliseconds(rest_time));
         
-        cpu_metric.evaluate();
-        NonBlockingWriter::WriterUtils::writeMetricWithTimestamp(
+        cpu_metric.Evaluate();
+        NonBlockingWriter::WriterUtils::WriteMetricWithTimestamp(
             writer, 
-            "VARIABLE_LOAD_" + cpu_metric.getName(), 
-            cpu_metric.getValueAsString()
+            "VARIABLE_LOAD_" + cpu_metric.GetName(), 
+            cpu_metric.GetValueAsString()
         );
     }
     
@@ -113,17 +113,17 @@ int main() {
     monitor_thread.join();
     
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    cpu_metric.evaluate();
-    NonBlockingWriter::WriterUtils::writeMetricWithTimestamp(writer, "FINAL_" + cpu_metric.getName(), cpu_metric.getValueAsString());
+    cpu_metric.Evaluate();
+    NonBlockingWriter::WriterUtils::WriteMetricWithTimestamp(writer, "FINAL_" + cpu_metric.GetName(), cpu_metric.GetValueAsString());
     
-    cpu_metric.reset();
+    cpu_metric.Reset();
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-    cpu_metric.evaluate();
+    cpu_metric.Evaluate();
     
-    std::cout << "Final CPU reading after reset: " << cpu_metric.getName() 
-              << " = " << cpu_metric.getValueAsString() << std::endl;
+    std::cout << "Final CPU reading after reset: " << cpu_metric.GetName() 
+              << " = " << cpu_metric.GetValueAsString() << std::endl;
     
-    NonBlockingWriter::WriterUtils::writeMetricWithTimestamp(writer, "IDLE_" + cpu_metric.getName(), cpu_metric.getValueAsString());
+    NonBlockingWriter::WriterUtils::WriteMetricWithTimestamp(writer, "IDLE_" + cpu_metric.GetName(), cpu_metric.GetValueAsString());
 
     writer.Stop();
     

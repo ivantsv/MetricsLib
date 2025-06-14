@@ -22,14 +22,14 @@ namespace Metrics {
         
     public:
         CPUMetric();
-        std::string getName() const noexcept override;
-        std::string getValueAsString() const override;
-        void evaluate() override;
-        void reset() override;
+        std::string GetName() const noexcept override;
+        std::string GetValueAsString() const override;
+        void Evaluate() override;
+        void Reset() override;
         
     private:
-        void initializeCPUData();
-        double calculateCPUUsage();
-        int getCPUCount() noexcept;
+        void InitializeCPUData();
+        double CalculateCPUUsage();
+        int GetCPUCount() noexcept;
     };
 }

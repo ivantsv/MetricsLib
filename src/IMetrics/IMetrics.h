@@ -6,11 +6,18 @@
 namespace Metrics {
     class IMetric {
     public:
+        IMetric() = default;
         virtual ~IMetric() = default;
-        virtual std::string getName() const = 0;
-        virtual std::string getValueAsString() const = 0;
-        virtual void evaluate() = 0;
-        virtual void reset() = 0;
+        virtual std::string GetName() const = 0;
+        virtual std::string GetValueAsString() const = 0;
+        virtual void Evaluate() = 0;
+        virtual void Reset() = 0;
+        
+        IMetric(const IMetric& other) = delete;
+        IMetric(IMetric&& other) = delete;
+        
+        IMetric& operator=(const IMetric& other) = delete;
+        IMetric&& operator=(IMetric&& other) = delete;
     };
 }
 
@@ -18,14 +25,14 @@ template <typename T>
 concept Metric = std::is_base_of_v<Metrics::IMetric, T>;
 
 std::ostream& operator<<(std::ostream& os, Metric auto& metric) {
-    os << metric.getName() << ": " << metric.getValueAsString();
-    metric.reset();
+    os << metric.GetName() << ": " << metric.GetValueAsString();
+    metric.Reset();
     
     return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const Metric auto& metric) {
-    os << metric.getName() << ": " << metric.getValueAsString();
+    os << metric.GetName() << ": " << metric.GetValueAsString();
     
     return os;
 }

@@ -11,20 +11,20 @@ namespace NonBlockingWriter {
 class WriterUtils {
 public:
 
-    static bool writeWithTimestamp(AsyncWriter& writer, const std::string& text) {
-        std::string timestamped = getCurrentTimestamp() + " " + text;
+    static bool WriteWithTimestamp(AsyncWriter& writer, const std::string& text) {
+        std::string timestamped = GetCurrentTimestamp() + " " + text;
         return writer.Write(timestamped);
     }
     
     template<typename... Args>
-    static bool writeFormatted(AsyncWriter& writer, const std::string& format, Args... args) {
+    static bool WriteFormatted(AsyncWriter& writer, const std::string& format, Args... args) {
         std::ostringstream oss;
-        writeFormattedImpl(oss, format, args...);
+        WriteFormattedImpl(oss, format, args...);
         return writer.Write(oss.str());
     }
     
     template<typename T>
-    static bool writeMetric(AsyncWriter& writer, const std::string& name, const T& value) {
+    static bool WriteMetric(AsyncWriter& writer, const std::string& name, const T& value) {
         std::ostringstream oss;
         oss << name << ": " << value;
         return writer.Write(oss.str());
@@ -32,14 +32,14 @@ public:
     
 
     template<typename T>
-    static bool writeMetricWithTimestamp(AsyncWriter& writer, const std::string& name, const T& value) {
+    static bool WriteMetricWithTimestamp(AsyncWriter& writer, const std::string& name, const T& value) {
         std::ostringstream oss;
-        oss << getCurrentTimestamp() << " " << name << ": " << value;
+        oss << GetCurrentTimestamp() << " " << name << ": " << value;
         return writer.Write(oss.str());
     }
 
 private:
-    static std::string getCurrentTimestamp() {
+    static std::string GetCurrentTimestamp() {
         auto now = std::chrono::system_clock::now();
         auto time_t = std::chrono::system_clock::to_time_t(now);
         auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -53,7 +53,7 @@ private:
     }
     
     template<typename T>
-    static void writeFormattedImpl(std::ostringstream& oss, const std::string& format, T&& value) {
+    static void WriteFormattedImpl(std::ostringstream& oss, const std::string& format, T&& value) {
         size_t pos = format.find("{}");
         if (pos != std::string::npos) {
             oss << format.substr(0, pos) << value << format.substr(pos + 2);
@@ -63,11 +63,11 @@ private:
     }
     
     template<typename T, typename... Args>
-    static void writeFormattedImpl(std::ostringstream& oss, const std::string& format, T&& value, Args&&... args) {
+    static void WriteFormattedImpl(std::ostringstream& oss, const std::string& format, T&& value, Args&&... args) {
         size_t pos = format.find("{}");
         if (pos != std::string::npos) {
             std::string remaining = format.substr(0, pos) + std::to_string(value) + format.substr(pos + 2);
-            writeFormattedImpl(oss, remaining, args...);
+            WriteFormattedImpl(oss, remaining, args...);
         } else {
             oss << format;
         }

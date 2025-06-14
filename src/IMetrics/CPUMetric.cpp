@@ -16,33 +16,33 @@
 using namespace Metrics;
 
 CPUMetric::CPUMetric() : current_utilization_(0.0), cpu_count_(0) {
-    cpu_count_ = getCPUCount();
-    initializeCPUData();
+    cpu_count_ = GetCPUCount();
+    InitializeCPUData();
 }
 
-std::string CPUMetric::getName() const noexcept {
+std::string CPUMetric::GetName() const noexcept {
     return "\"CPU\"";
 }
 
-std::string CPUMetric::getValueAsString() const {
+std::string CPUMetric::GetValueAsString() const {
     std::lock_guard<std::mutex> lock(mutex_);
     std::ostringstream oss;
     oss << std::fixed << std::setprecision(2) << current_utilization_;
     return oss.str();
 }
 
-void CPUMetric::evaluate() {
+void CPUMetric::Evaluate() {
     std::lock_guard<std::mutex> lock(mutex_);
-    current_utilization_ = calculateCPUUsage();
+    current_utilization_ = CalculateCPUUsage();
 }
 
-void CPUMetric::reset() {
+void CPUMetric::Reset() {
     std::lock_guard<std::mutex> lock(mutex_);
     current_utilization_ = 0.0;
-    initializeCPUData();
+    InitializeCPUData();
 }
 
-int CPUMetric::getCPUCount() noexcept {
+int CPUMetric::GetCPUCount() noexcept {
 #ifdef _WIN32
     SYSTEM_INFO sysinfo;
     GetSystemInfo(&sysinfo);
@@ -52,7 +52,7 @@ int CPUMetric::getCPUCount() noexcept {
 #endif
 }
 
-void CPUMetric::initializeCPUData() {
+void CPUMetric::InitializeCPUData() {
 #ifdef _WIN32
     FILETIME idle_time, kernel_time, user_time;
     GetSystemTimes(&idle_time, &kernel_time, &user_time);
@@ -84,7 +84,7 @@ void CPUMetric::initializeCPUData() {
 #endif
 }
 
-double CPUMetric::calculateCPUUsage() {
+double CPUMetric::CalculateCPUUsage() {
 #ifdef _WIN32
     FILETIME idle_time_ft, kernel_time_ft, user_time_ft;
     GetSystemTimes(&idle_time_ft, &kernel_time_ft, &user_time_ft);

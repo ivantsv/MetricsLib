@@ -16,7 +16,7 @@ protected:
     }
 
     void TearDown() override {
-        metric.reset();
+        metric->Reset();
     }
 
     std::unique_ptr<CPUMetric> metric;
@@ -72,55 +72,55 @@ TEST_F(CPUMetricTest, ConstructorDoesNotThrow) {
 }
 
 TEST_F(CPUMetricTest, ConstructorInitializesValidState) {
-    std::string initial_value = metric->getValueAsString();
+    std::string initial_value = metric->GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(initial_value));
     EXPECT_TRUE(hasCorrectPrecision(initial_value));
     EXPECT_TRUE(hasValidFormat(initial_value));
 }
 
 TEST_F(CPUMetricTest, GetNameReturnsCPU) {
-    EXPECT_EQ("\"CPU\"", metric->getName());
+    EXPECT_EQ("\"CPU\"", metric->GetName());
 }
 
 TEST_F(CPUMetricTest, GetNameIsConsistent) {
     for (int i = 0; i < 5; ++i) {
-        EXPECT_EQ("\"CPU\"", metric->getName());
+        EXPECT_EQ("\"CPU\"", metric->GetName());
     }
 }
 
 TEST_F(CPUMetricTest, GetNameUnchangedAfterEvaluate) {
-    metric->evaluate();
-    EXPECT_EQ("\"CPU\"", metric->getName());
+    metric->Evaluate();
+    EXPECT_EQ("\"CPU\"", metric->GetName());
 }
 
 TEST_F(CPUMetricTest, GetNameUnchangedAfterReset) {
-    metric->reset();
-    EXPECT_EQ("\"CPU\"", metric->getName());
+    metric->Reset();
+    EXPECT_EQ("\"CPU\"", metric->GetName());
 }
 
 TEST_F(CPUMetricTest, GetValueAsStringReturnsValidDouble) {
-    std::string value_str = metric->getValueAsString();
+    std::string value_str = metric->GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(value_str));
 }
 
 TEST_F(CPUMetricTest, GetValueAsStringHasCorrectPrecision) {
-    std::string value_str = metric->getValueAsString();
+    std::string value_str = metric->GetValueAsString();
     EXPECT_TRUE(hasCorrectPrecision(value_str));
 }
 
 TEST_F(CPUMetricTest, GetValueAsStringHasValidFormat) {
-    std::string value_str = metric->getValueAsString();
+    std::string value_str = metric->GetValueAsString();
     EXPECT_TRUE(hasValidFormat(value_str));
 }
 
 TEST_F(CPUMetricTest, GetValueAsStringReturnsNonNegative) {
-    std::string value_str = metric->getValueAsString();
+    std::string value_str = metric->GetValueAsString();
     double value = std::stod(value_str);
     EXPECT_GE(value, 0.0);
 }
 
 TEST_F(CPUMetricTest, GetValueAsStringMatchesExpectedFormat) {
-    std::string value_str = metric->getValueAsString();
+    std::string value_str = metric->GetValueAsString();
     double value = std::stod(value_str);
     
     std::ostringstream expected_format;
@@ -129,18 +129,18 @@ TEST_F(CPUMetricTest, GetValueAsStringMatchesExpectedFormat) {
 }
 
 TEST_F(CPUMetricTest, EvaluateDoesNotThrow) {
-    EXPECT_NO_THROW(metric->evaluate());
+    EXPECT_NO_THROW(metric->Evaluate());
 }
 
 TEST_F(CPUMetricTest, EvaluateProducesValidValue) {
-    metric->evaluate();
-    std::string value_after_evaluate = metric->getValueAsString();
-    EXPECT_TRUE(isValidDoubleString(value_after_evaluate));
-    EXPECT_TRUE(hasCorrectPrecision(value_after_evaluate));
+    metric->Evaluate();
+    std::string value_after_Evaluate = metric->GetValueAsString();
+    EXPECT_TRUE(isValidDoubleString(value_after_Evaluate));
+    EXPECT_TRUE(hasCorrectPrecision(value_after_Evaluate));
 }
 
 TEST_F(CPUMetricTest, EvaluateActuallyUpdatesValue) {
-    std::string initial_value = metric->getValueAsString();
+    std::string initial_value = metric->GetValueAsString();
     
     auto start = std::chrono::high_resolution_clock::now();
     volatile int dummy = 0;
@@ -149,11 +149,11 @@ TEST_F(CPUMetricTest, EvaluateActuallyUpdatesValue) {
         dummy += rand();
     }
     
-    metric->evaluate();
+    metric->Evaluate();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    metric->evaluate();
+    metric->Evaluate();
     
-    std::string updated_value = metric->getValueAsString();
+    std::string updated_value = metric->GetValueAsString();
     
     if (initial_value == "0.00") {
         EXPECT_TRUE(isValidDoubleString(updated_value));
@@ -173,13 +173,13 @@ TEST_F(CPUMetricTest, CPUValueInReasonableRange) {
     });
     
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    metric->evaluate();
+    metric->Evaluate();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    metric->evaluate();
+    metric->Evaluate();
     
     load_thread.join();
     
-    std::string value_str = metric->getValueAsString();
+    std::string value_str = metric->GetValueAsString();
     double value = std::stod(value_str);
     
     EXPECT_GE(value, 0.0);
@@ -196,9 +196,9 @@ TEST_F(CPUMetricTest, ConsecutiveEvaluationsShowCPUActivity) {
         }
         
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        metric->evaluate();
+        metric->Evaluate();
         
-        std::string value_str = metric->getValueAsString();
+        std::string value_str = metric->GetValueAsString();
         double value = std::stod(value_str);
         values.push_back(value);
         
@@ -221,22 +221,22 @@ TEST_F(CPUMetricTest, ResetActuallyZerosTheValue) {
         dummy += i;
     }
     
-    metric->evaluate();
+    metric->Evaluate();
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    metric->evaluate();
+    metric->Evaluate();
     
-    std::string value_before_reset = metric->getValueAsString();
+    std::string value_before_Reset = metric->GetValueAsString();
     
-    metric->reset();
-    std::string value_after_reset = metric->getValueAsString();
+    metric->Reset();
+    std::string value_after_Reset = metric->GetValueAsString();
     
-    EXPECT_EQ("0.00", value_after_reset);
+    EXPECT_EQ("0.00", value_after_Reset);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    metric->evaluate();
+    metric->Evaluate();
     
-    std::string value_after_evaluate = metric->getValueAsString();
-    EXPECT_TRUE(isValidDoubleString(value_after_evaluate));
+    std::string value_after_Evaluate = metric->GetValueAsString();
+    EXPECT_TRUE(isValidDoubleString(value_after_Evaluate));
 }
 
 TEST_F(CPUMetricTest, MultipleEvaluationsProduceValidValues) {
@@ -244,8 +244,8 @@ TEST_F(CPUMetricTest, MultipleEvaluationsProduceValidValues) {
     
     for (int i = 0; i < 5; ++i) {
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        metric->evaluate();
-        values.push_back(metric->getValueAsString());
+        metric->Evaluate();
+        values.push_back(metric->GetValueAsString());
     }
     
     for (size_t i = 0; i < values.size(); ++i) {
@@ -256,46 +256,46 @@ TEST_F(CPUMetricTest, MultipleEvaluationsProduceValidValues) {
 
 TEST_F(CPUMetricTest, RapidEvaluationsDoNotThrow) {
     for (int i = 0; i < 10; ++i) {
-        EXPECT_NO_THROW(metric->evaluate()) << "Rapid evaluation " << i << " threw exception";
-        std::string value = metric->getValueAsString();
+        EXPECT_NO_THROW(metric->Evaluate()) << "Rapid evaluation " << i << " threw exception";
+        std::string value = metric->GetValueAsString();
         EXPECT_TRUE(isValidDoubleString(value)) << "Rapid evaluation " << i << " produced invalid value";
     }
 }
 
 TEST_F(CPUMetricTest, ResetDoesNotThrow) {
-    EXPECT_NO_THROW(metric->reset());
+    EXPECT_NO_THROW(metric->Reset());
 }
 
 TEST_F(CPUMetricTest, ResetSetsValueToZero) {
-    metric->evaluate();
+    metric->Evaluate();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    metric->evaluate();
+    metric->Evaluate();
 
-    metric->reset();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Reset();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
 TEST_F(CPUMetricTest, ResetProducesValidValue) {
-    metric->reset();
-    std::string value_after_reset = metric->getValueAsString();
-    EXPECT_TRUE(isValidDoubleString(value_after_reset));
-    EXPECT_TRUE(hasCorrectPrecision(value_after_reset));
+    metric->Reset();
+    std::string value_after_Reset = metric->GetValueAsString();
+    EXPECT_TRUE(isValidDoubleString(value_after_Reset));
+    EXPECT_TRUE(hasCorrectPrecision(value_after_Reset));
 }
 
 TEST_F(CPUMetricTest, ConsecutiveResetsWork) {
     for (int i = 0; i < 3; ++i) {
-        metric->reset();
-        EXPECT_EQ("0.00", metric->getValueAsString()) << "Reset " << (i + 1) << " failed";
+        metric->Reset();
+        EXPECT_EQ("0.00", metric->GetValueAsString()) << "Reset " << (i + 1) << " failed";
     }
 }
 
 TEST_F(CPUMetricTest, EvaluateAndGetValueIntegration) {
-    std::string value_before = metric->getValueAsString();
+    std::string value_before = metric->GetValueAsString();
     
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    metric->evaluate();
+    metric->Evaluate();
     
-    std::string value_after = metric->getValueAsString();
+    std::string value_after = metric->GetValueAsString();
     
     EXPECT_TRUE(isValidDoubleString(value_before));
     EXPECT_TRUE(isValidDoubleString(value_after));
@@ -306,46 +306,46 @@ TEST_F(CPUMetricTest, EvaluateAndGetValueIntegration) {
 TEST_F(CPUMetricTest, ResetAfterEvaluateWorks) {
     for (int i = 0; i < 3; ++i) {
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        metric->evaluate();
+        metric->Evaluate();
     }
 
-    metric->reset();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Reset();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    metric->evaluate();
+    metric->Evaluate();
     
-    std::string value_after_evaluate = metric->getValueAsString();
-    EXPECT_TRUE(isValidDoubleString(value_after_evaluate));
+    std::string value_after_Evaluate = metric->GetValueAsString();
+    EXPECT_TRUE(isValidDoubleString(value_after_Evaluate));
 }
 
 TEST_F(CPUMetricTest, WorksThroughIMetricPointer) {
     std::unique_ptr<IMetric> metric_ptr = std::make_unique<CPUMetric>();
     
-    EXPECT_EQ("\"CPU\"", metric_ptr->getName());
+    EXPECT_EQ("\"CPU\"", metric_ptr->GetName());
     
-    std::string value = metric_ptr->getValueAsString();
+    std::string value = metric_ptr->GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(value));
     
-    EXPECT_NO_THROW(metric_ptr->evaluate());
+    EXPECT_NO_THROW(metric_ptr->Evaluate());
     
-    EXPECT_NO_THROW(metric_ptr->reset());
-    EXPECT_EQ("0.00", metric_ptr->getValueAsString());
+    EXPECT_NO_THROW(metric_ptr->Reset());
+    EXPECT_EQ("0.00", metric_ptr->GetValueAsString());
 }
 
 TEST_F(CPUMetricTest, EvaluateCompletesInReasonableTime) {
     auto start = std::chrono::high_resolution_clock::now();
-    metric->evaluate();
+    metric->Evaluate();
     auto end = std::chrono::high_resolution_clock::now();
     
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    EXPECT_LT(duration.count(), 1000) << "evaluate() took too long: " << duration.count() << "ms";
+    EXPECT_LT(duration.count(), 1000) << "Evaluate() took too long: " << duration.count() << "ms";
 }
 
 TEST_F(CPUMetricTest, MultipleEvaluationsCompleteInReasonableTime) {
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 5; ++i) {
-        metric->evaluate();
+        metric->Evaluate();
     }
     auto end = std::chrono::high_resolution_clock::now();
     
@@ -354,16 +354,16 @@ TEST_F(CPUMetricTest, MultipleEvaluationsCompleteInReasonableTime) {
 }
 
 TEST_F(CPUMetricTest, ValueStringFormatConsistency) {
-    std::vector<std::string> scenarios = {"initial", "after_evaluate", "after_reset"};
+    std::vector<std::string> scenarios = {"initial", "after_Evaluate", "after_Reset"};
     
     for (const auto& scenario : scenarios) {
-        if (scenario == "after_evaluate") {
-            metric->evaluate();
-        } else if (scenario == "after_reset") {
-            metric->reset();
+        if (scenario == "after_Evaluate") {
+            metric->Evaluate();
+        } else if (scenario == "after_Reset") {
+            metric->Reset();
         }
         
-        std::string value_str = metric->getValueAsString();
+        std::string value_str = metric->GetValueAsString();
         EXPECT_TRUE(hasValidFormat(value_str)) << "Invalid format for scenario: " << scenario;
         
         double value = std::stod(value_str);
@@ -383,14 +383,14 @@ protected:
 TEST_F(CPUMetricStressTest, HandlesManyOperations) {
     for (int i = 0; i < 100; ++i) {
         if (i % 10 == 0) {
-            EXPECT_NO_THROW(metric->reset());
+            EXPECT_NO_THROW(metric->Reset());
         } else {
-            EXPECT_NO_THROW(metric->evaluate());
+            EXPECT_NO_THROW(metric->Evaluate());
         }
         
-        EXPECT_EQ("\"CPU\"", metric->getName());
+        EXPECT_EQ("\"CPU\"", metric->GetName());
         
-        std::string value = metric->getValueAsString();
+        std::string value = metric->GetValueAsString();
         EXPECT_TRUE(std::stod(value) >= 0.0);
     }
 }

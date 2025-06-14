@@ -10,24 +10,24 @@ HTTPSIncomeMetric::HTTPSIncomeMetric(unsigned long long start)
     , last_evaluated_counter_(start)
 {}
 
-std::string HTTPSIncomeMetric::getName() const noexcept {
+std::string HTTPSIncomeMetric::GetName() const noexcept {
     return "\"HTTPS requests RPS\"";
 }
 
-std::string HTTPSIncomeMetric::getValueAsString() const {
+std::string HTTPSIncomeMetric::GetValueAsString() const {
     std::ostringstream oss;
     oss << std::fixed << std::setprecision(2) << current_rps_value_;
     return oss.str();
 }
 
-void HTTPSIncomeMetric::evaluate() noexcept {
+void HTTPSIncomeMetric::Evaluate() noexcept {
     unsigned long long current_total_requests = counter_.load(std::memory_order_relaxed);
     unsigned long long requests_in_interval = current_total_requests - last_evaluated_counter_;
     current_rps_value_ = static_cast<double>(requests_in_interval);
     last_evaluated_counter_ = current_total_requests;
 }
 
-void HTTPSIncomeMetric::reset() noexcept {
+void HTTPSIncomeMetric::Reset() noexcept {
     counter_ = 0;
     current_rps_value_ = 0.0;
     last_evaluated_counter_ = 0;

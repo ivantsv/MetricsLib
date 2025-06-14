@@ -19,7 +19,7 @@ protected:
     }
 
     void TearDown() override {
-        metric.reset();
+        metric->Reset();
     }
 
     std::unique_ptr<HTTPSIncomeMetric> metric;
@@ -76,7 +76,7 @@ TEST_F(HTTPSIncomeMetricTest, ConstructorWithStartValueDoesNotThrow) {
 }
 
 TEST_F(HTTPSIncomeMetricTest, ConstructorInitializesValidState) {
-    std::string initial_value = metric->getValueAsString();
+    std::string initial_value = metric->GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(initial_value));
     EXPECT_TRUE(hasCorrectPrecision(initial_value));
     EXPECT_EQ("0.00", initial_value);
@@ -84,52 +84,52 @@ TEST_F(HTTPSIncomeMetricTest, ConstructorInitializesValidState) {
 
 TEST_F(HTTPSIncomeMetricTest, ConstructorWithStartValueInitializesCorrectly) {
     HTTPSIncomeMetric custom_metric(50);
-    std::string initial_value = custom_metric.getValueAsString();
+    std::string initial_value = custom_metric.GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(initial_value));
     EXPECT_TRUE(hasCorrectPrecision(initial_value));
     EXPECT_EQ("0.00", initial_value);
 }
 
 TEST_F(HTTPSIncomeMetricTest, GetNameReturnsCorrectName) {
-    EXPECT_EQ("\"HTTPS requests RPS\"", metric->getName());
+    EXPECT_EQ("\"HTTPS requests RPS\"", metric->GetName());
 }
 
 TEST_F(HTTPSIncomeMetricTest, GetNameIsConsistent) {
     for (int i = 0; i < 5; ++i) {
-        EXPECT_EQ("\"HTTPS requests RPS\"", metric->getName());
+        EXPECT_EQ("\"HTTPS requests RPS\"", metric->GetName());
     }
 }
 
 TEST_F(HTTPSIncomeMetricTest, GetNameUnchangedAfterOperations) {
     ++(*metric);
-    metric->evaluate();
-    EXPECT_EQ("\"HTTPS requests RPS\"", metric->getName());
+    metric->Evaluate();
+    EXPECT_EQ("\"HTTPS requests RPS\"", metric->GetName());
     
-    metric->reset();
-    EXPECT_EQ("\"HTTPS requests RPS\"", metric->getName());
+    metric->Reset();
+    EXPECT_EQ("\"HTTPS requests RPS\"", metric->GetName());
 }
 
 TEST_F(HTTPSIncomeMetricTest, GetValueAsStringReturnsValidDouble) {
-    std::string value_str = metric->getValueAsString();
+    std::string value_str = metric->GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(value_str));
 }
 
 TEST_F(HTTPSIncomeMetricTest, GetValueAsStringHasCorrectPrecision) {
-    std::string value_str = metric->getValueAsString();
+    std::string value_str = metric->GetValueAsString();
     EXPECT_TRUE(hasCorrectPrecision(value_str));
 }
 
 TEST_F(HTTPSIncomeMetricTest, GetValueAsStringReturnsNonNegative) {
-    std::string value_str = metric->getValueAsString();
+    std::string value_str = metric->GetValueAsString();
     double value = std::stod(value_str);
     EXPECT_GE(value, 0.0);
 }
 
 TEST_F(HTTPSIncomeMetricTest, GetValueAsStringMatchesExpectedFormat) {
     ++(*metric);
-    metric->evaluate();
+    metric->Evaluate();
     
-    std::string value_str = metric->getValueAsString();
+    std::string value_str = metric->GetValueAsString();
     double value = std::stod(value_str);
     
     std::ostringstream expected_format;
@@ -162,12 +162,12 @@ TEST_F(HTTPSIncomeMetricTest, MultipleIncrementsWork) {
 }
 
 TEST_F(HTTPSIncomeMetricTest, EvaluateDoesNotThrow) {
-    EXPECT_NO_THROW(metric->evaluate());
+    EXPECT_NO_THROW(metric->Evaluate());
 }
 
 TEST_F(HTTPSIncomeMetricTest, EvaluateAfterNoRequestsReturnsZero) {
-    metric->evaluate();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, EvaluateCalculatesCorrectRPS) {
@@ -175,82 +175,82 @@ TEST_F(HTTPSIncomeMetricTest, EvaluateCalculatesCorrectRPS) {
         ++(*metric);
     }
     
-    metric->evaluate();
-    EXPECT_EQ("5.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("5.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, ConsecutiveEvaluatesWork) {
     for (int i = 0; i < 3; ++i) {
         ++(*metric);
     }
-    metric->evaluate();
-    EXPECT_EQ("3.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("3.00", metric->GetValueAsString());
     
     for (int i = 0; i < 2; ++i) {
         ++(*metric);
     }
-    metric->evaluate();
-    EXPECT_EQ("2.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("2.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, EvaluateCalculatesIncrementalRequests) {
-    metric->evaluate();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
     
     for (int i = 0; i < 10; ++i) {
         ++(*metric);
     }
-    metric->evaluate();
-    EXPECT_EQ("10.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("10.00", metric->GetValueAsString());
     
     for (int i = 0; i < 5; ++i) {
         ++(*metric);
     }
-    metric->evaluate();
-    EXPECT_EQ("5.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("5.00", metric->GetValueAsString());
     
-    metric->evaluate();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, ResetDoesNotThrow) {
-    EXPECT_NO_THROW(metric->reset());
+    EXPECT_NO_THROW(metric->Reset());
 }
 
 TEST_F(HTTPSIncomeMetricTest, ResetSetsValueToZero) {
     for (int i = 0; i < 10; ++i) {
         ++(*metric);
     }
-    metric->evaluate();
+    metric->Evaluate();
     
-    metric->reset();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Reset();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, ResetClearsInternalCounters) {
     for (int i = 0; i < 15; ++i) {
         ++(*metric);
     }
-    metric->evaluate();
+    metric->Evaluate();
     
-    metric->reset();
+    metric->Reset();
     
-    metric->evaluate();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
     
     for (int i = 0; i < 3; ++i) {
         ++(*metric);
     }
-    metric->evaluate();
-    EXPECT_EQ("3.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("3.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, ConsecutiveResetsWork) {
     for (int i = 0; i < 3; ++i) {
         ++(*metric);
-        metric->evaluate();
-        metric->reset();
-        EXPECT_EQ("0.00", metric->getValueAsString()) << "Reset " << (i + 1) << " failed";
+        metric->Evaluate();
+        metric->Reset();
+        EXPECT_EQ("0.00", metric->GetValueAsString()) << "Reset " << (i + 1) << " failed";
     }
 }
 
@@ -271,9 +271,9 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentIncrementsAreThreadSafe) {
         t.join();
     }
     
-    metric->evaluate();
+    metric->Evaluate();
     double total_expected = num_threads * requests_per_thread;
-    double actual = std::stod(metric->getValueAsString());
+    double actual = std::stod(metric->GetValueAsString());
     
     EXPECT_EQ(total_expected, actual);
 }
@@ -290,8 +290,8 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentEvaluatesAreThreadSafe) {
     for (int i = 0; i < num_threads; ++i) {
         threads.emplace_back([this, &completed_evaluations]() {
             for (int j = 0; j < 10; ++j) {
-                EXPECT_NO_THROW(metric->evaluate());
-                std::string value = metric->getValueAsString();
+                EXPECT_NO_THROW(metric->Evaluate());
+                std::string value = metric->GetValueAsString();
                 EXPECT_TRUE(isValidDoubleString(value));
                 ++completed_evaluations;
             }
@@ -326,8 +326,8 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentIncrementsAndEvaluates) {
     for (int i = 0; i < evaluate_threads; ++i) {
         threads.emplace_back([this, evaluations_per_thread, &should_stop]() {
             for (int j = 0; j < evaluations_per_thread && !should_stop; ++j) {
-                EXPECT_NO_THROW(metric->evaluate());
-                std::string value = metric->getValueAsString();
+                EXPECT_NO_THROW(metric->Evaluate());
+                std::string value = metric->GetValueAsString();
                 EXPECT_TRUE(isValidDoubleString(value));
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
@@ -340,8 +340,8 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentIncrementsAndEvaluates) {
     
     should_stop = true;
     
-    metric->evaluate();
-    std::string final_value = metric->getValueAsString();
+    metric->Evaluate();
+    std::string final_value = metric->GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(final_value));
 }
 
@@ -358,7 +358,7 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentResetAndOperations) {
     
     threads.emplace_back([this, &should_stop]() {
         for (int i = 0; i < 50 && !should_stop; ++i) {
-            EXPECT_NO_THROW(metric->evaluate());
+            EXPECT_NO_THROW(metric->Evaluate());
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
         }
     });
@@ -366,7 +366,7 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentResetAndOperations) {
     threads.emplace_back([this, &should_stop]() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         for (int i = 0; i < 5 && !should_stop; ++i) {
-            EXPECT_NO_THROW(metric->reset());
+            EXPECT_NO_THROW(metric->Reset());
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
         }
     });
@@ -378,23 +378,23 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentResetAndOperations) {
         t.join();
     }
     
-    metric->reset();
+    metric->Reset();
     ++(*metric);
-    metric->evaluate();
-    EXPECT_EQ("1.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("1.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, WorksThroughIMetricPointer) {
     std::unique_ptr<IMetric> metric_ptr = std::make_unique<HTTPSIncomeMetric>();
     
-    EXPECT_EQ("\"HTTPS requests RPS\"", metric_ptr->getName());
+    EXPECT_EQ("\"HTTPS requests RPS\"", metric_ptr->GetName());
     
-    std::string value = metric_ptr->getValueAsString();
+    std::string value = metric_ptr->GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(value));
     
-    EXPECT_NO_THROW(metric_ptr->evaluate());
-    EXPECT_NO_THROW(metric_ptr->reset());
-    EXPECT_EQ("0.00", metric_ptr->getValueAsString());
+    EXPECT_NO_THROW(metric_ptr->Evaluate());
+    EXPECT_NO_THROW(metric_ptr->Reset());
+    EXPECT_EQ("0.00", metric_ptr->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, HighVolumeIncrementsPerformance) {
@@ -409,8 +409,8 @@ TEST_F(HTTPSIncomeMetricTest, HighVolumeIncrementsPerformance) {
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     EXPECT_LT(duration.count(), 1000) << "100k increments took too long: " << duration.count() << "ms";
     
-    metric->evaluate();
-    EXPECT_EQ(std::to_string(num_requests) + ".00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ(std::to_string(num_requests) + ".00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, EvaluateCompletesQuickly) {
@@ -419,11 +419,11 @@ TEST_F(HTTPSIncomeMetricTest, EvaluateCompletesQuickly) {
     }
     
     auto start = std::chrono::high_resolution_clock::now();
-    metric->evaluate();
+    metric->Evaluate();
     auto end = std::chrono::high_resolution_clock::now();
     
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    EXPECT_LT(duration.count(), 10) << "evaluate() took too long: " << duration.count() << "ms";
+    EXPECT_LT(duration.count(), 10) << "Evaluate() took too long: " << duration.count() << "ms";
 }
 
 TEST_F(HTTPSIncomeMetricTest, SimulatedHttpRequestsBurst) {
@@ -431,11 +431,11 @@ TEST_F(HTTPSIncomeMetricTest, SimulatedHttpRequestsBurst) {
         ++(*metric);
     }
     
-    metric->evaluate();
-    EXPECT_EQ("50.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("50.00", metric->GetValueAsString());
     
-    metric->evaluate();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, SimulatedSteadyTraffic) {
@@ -446,8 +446,8 @@ TEST_F(HTTPSIncomeMetricTest, SimulatedSteadyTraffic) {
         for (int j = 0; j < request_intervals[i]; ++j) {
             ++(*metric);
         }
-        metric->evaluate();
-        EXPECT_EQ(expected_values[i], metric->getValueAsString()) 
+        metric->Evaluate();
+        EXPECT_EQ(expected_values[i], metric->GetValueAsString()) 
             << "Interval " << i << " failed";
     }
 }
@@ -468,8 +468,8 @@ TEST_F(HTTPSIncomeMetricTest, SimulatedVariableLoad) {
             ++(*metric);
         }
         
-        metric->evaluate();
-        actual_values.push_back(metric->getValueAsString());
+        metric->Evaluate();
+        actual_values.push_back(metric->GetValueAsString());
         
         std::ostringstream expected;
         expected << std::fixed << std::setprecision(2) << static_cast<double>(requests);
@@ -480,8 +480,8 @@ TEST_F(HTTPSIncomeMetricTest, SimulatedVariableLoad) {
 
 TEST_F(HTTPSIncomeMetricTest, ZeroRequestsConsistentBehavior) {
     for (int i = 0; i < 5; ++i) {
-        metric->evaluate();
-        EXPECT_EQ("0.00", metric->getValueAsString()) << "Evaluation " << i << " failed";
+        metric->Evaluate();
+        EXPECT_EQ("0.00", metric->GetValueAsString()) << "Evaluation " << i << " failed";
     }
 }
 
@@ -492,25 +492,25 @@ TEST_F(HTTPSIncomeMetricTest, LargeNumberOfRequests) {
         ++(*metric);
     }
     
-    metric->evaluate();
+    metric->Evaluate();
     
     std::ostringstream expected;
     expected << std::fixed << std::setprecision(2) << static_cast<double>(large_number);
-    EXPECT_EQ(expected.str(), metric->getValueAsString());
+    EXPECT_EQ(expected.str(), metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, ValueStringFormatConsistency) {
     std::vector<int> test_values = {0, 1, 10, 100, 1000};
     
     for (int value : test_values) {
-        metric->reset();
+        metric->Reset();
         
         for (int i = 0; i < value; ++i) {
             ++(*metric);
         }
         
-        metric->evaluate();
-        std::string result = metric->getValueAsString();
+        metric->Evaluate();
+        std::string result = metric->GetValueAsString();
         
         EXPECT_TRUE(hasCorrectPrecision(result)) << "Value " << value << " has incorrect precision";
         EXPECT_TRUE(isValidDoubleString(result)) << "Value " << value << " is not valid double";
@@ -538,16 +538,16 @@ TEST_F(HTTPSIncomeMetricStressTest, HighFrequencyOperations) {
             ++(*metric);
         }
         
-        metric->evaluate();
-        EXPECT_EQ("1000.00", metric->getValueAsString());
+        metric->Evaluate();
+        EXPECT_EQ("1000.00", metric->GetValueAsString());
         
-        metric->reset();
-        EXPECT_EQ("0.00", metric->getValueAsString());
+        metric->Reset();
+        EXPECT_EQ("0.00", metric->GetValueAsString());
     }
     
     ++(*metric);
-    metric->evaluate();
-    EXPECT_EQ("1.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("1.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricStressTest, ConcurrentStressTest) {
@@ -563,11 +563,11 @@ TEST_F(HTTPSIncomeMetricStressTest, ConcurrentStressTest) {
                 ++total_operations;
                 
                 if (j % 100 == 0) {
-                    metric->evaluate();
+                    metric->Evaluate();
                 }
                 
                 if (j % 200 == 0) {
-                    std::string value = metric->getValueAsString();
+                    std::string value = metric->GetValueAsString();
                     EXPECT_TRUE(std::stod(value) >= 0.0);
                 }
             }
@@ -583,46 +583,46 @@ TEST_F(HTTPSIncomeMetricStressTest, ConcurrentStressTest) {
 
 TEST_F(HTTPSIncomeMetricTest, ConstructorWithMaxValue) {
     HTTPSIncomeMetric max_metric(ULLONG_MAX);
-    EXPECT_EQ("0.00", max_metric.getValueAsString());
-    EXPECT_NO_THROW(max_metric.evaluate());
+    EXPECT_EQ("0.00", max_metric.GetValueAsString());
+    EXPECT_NO_THROW(max_metric.Evaluate());
 }
 
 TEST_F(HTTPSIncomeMetricTest, EvaluateAfterReset) {
     for (int i = 0; i < 10; ++i) {
         ++(*metric);
     }
-    metric->evaluate();
-    EXPECT_EQ("10.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("10.00", metric->GetValueAsString());
     
-    metric->reset();
-    metric->evaluate();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Reset();
+    metric->Evaluate();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, MultipleEvaluationsWithoutIncrements) {
-    metric->evaluate();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
     
     for (int i = 0; i < 5; ++i) {
-        metric->evaluate();
-        EXPECT_EQ("0.00", metric->getValueAsString()) << "Evaluation " << i << " failed";
+        metric->Evaluate();
+        EXPECT_EQ("0.00", metric->GetValueAsString()) << "Evaluation " << i << " failed";
     }
 }
 
 TEST_F(HTTPSIncomeMetricTest, IncrementBetweenEvaluations) {
-    metric->evaluate();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
     
     ++(*metric);
-    metric->evaluate();
-    EXPECT_EQ("1.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("1.00", metric->GetValueAsString());
     
     ++(*metric);
-    metric->evaluate();
-    EXPECT_EQ("1.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("1.00", metric->GetValueAsString());
     
-    metric->evaluate();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, ChainedIncrements) {
@@ -634,8 +634,8 @@ TEST_F(HTTPSIncomeMetricTest, ChainedIncrements) {
     EXPECT_EQ(&ref2, metric.get());
     EXPECT_EQ(&ref3, metric.get());
     
-    metric->evaluate();
-    EXPECT_EQ("3.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("3.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, MixedIncrementTypes) {
@@ -644,8 +644,8 @@ TEST_F(HTTPSIncomeMetricTest, MixedIncrementTypes) {
     ++(*metric);
     (*metric)++;
     
-    metric->evaluate();
-    EXPECT_EQ("4.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("4.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, MemoryStability) {
@@ -653,14 +653,14 @@ TEST_F(HTTPSIncomeMetricTest, MemoryStability) {
         for (int i = 0; i < 1000; ++i) {
             ++(*metric);
         }
-        metric->evaluate();
-        EXPECT_EQ("1000.00", metric->getValueAsString());
-        metric->reset();
+        metric->Evaluate();
+        EXPECT_EQ("1000.00", metric->GetValueAsString());
+        metric->Reset();
     }
     
     ++(*metric);
-    metric->evaluate();
-    EXPECT_EQ("1.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("1.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, AtomicOperationsConsistency) {
@@ -670,27 +670,27 @@ TEST_F(HTTPSIncomeMetricTest, AtomicOperationsConsistency) {
         ++(*metric);
     }
     
-    metric->evaluate();
-    EXPECT_EQ(std::to_string(num_operations) + ".00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ(std::to_string(num_operations) + ".00", metric->GetValueAsString());
     
-    metric->evaluate();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, StateConsistencyAfterOperations) {
-    EXPECT_EQ("0.00", metric->getValueAsString());
-    EXPECT_EQ("\"HTTPS requests RPS\"", metric->getName());
+    EXPECT_EQ("0.00", metric->GetValueAsString());
+    EXPECT_EQ("\"HTTPS requests RPS\"", metric->GetName());
     
     ++(*metric);
-    EXPECT_EQ("\"HTTPS requests RPS\"", metric->getName());
+    EXPECT_EQ("\"HTTPS requests RPS\"", metric->GetName());
     
-    metric->evaluate();
-    EXPECT_EQ("\"HTTPS requests RPS\"", metric->getName());
-    EXPECT_NE("0.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("\"HTTPS requests RPS\"", metric->GetName());
+    EXPECT_NE("0.00", metric->GetValueAsString());
     
-    metric->reset();
-    EXPECT_EQ("\"HTTPS requests RPS\"", metric->getName());
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Reset();
+    EXPECT_EQ("\"HTTPS requests RPS\"", metric->GetName());
+    EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, ConcurrentReadOperations) {
@@ -701,13 +701,13 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentReadOperations) {
     for (int i = 0; i < 50; ++i) {
         ++(*metric);
     }
-    metric->evaluate();
+    metric->Evaluate();
     
     for (int i = 0; i < num_threads; ++i) {
         threads.emplace_back([this, &successful_reads]() {
             for (int j = 0; j < 100; ++j) {
-                std::string name = metric->getName();
-                std::string value = metric->getValueAsString();
+                std::string name = metric->GetName();
+                std::string value = metric->GetValueAsString();
                 
                 if (name == "\"HTTPS requests RPS\"" && 
                     isValidDoubleString(value) && 
@@ -732,8 +732,8 @@ TEST_F(HTTPSIncomeMetricTest, ExtremeValueHandling) {
         EXPECT_NO_THROW(++large_metric);
     }
     
-    EXPECT_NO_THROW(large_metric.evaluate());
-    std::string value = large_metric.getValueAsString();
+    EXPECT_NO_THROW(large_metric.Evaluate());
+    std::string value = large_metric.GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(value));
     EXPECT_TRUE(hasCorrectPrecision(value));
 }
@@ -741,9 +741,9 @@ TEST_F(HTTPSIncomeMetricTest, ExtremeValueHandling) {
 TEST_F(HTTPSIncomeMetricTest, RapidResetOperations) {
     for (int i = 0; i < 1000; ++i) {
         ++(*metric);
-        metric->evaluate();
-        metric->reset();
-        EXPECT_EQ("0.00", metric->getValueAsString());
+        metric->Evaluate();
+        metric->Reset();
+        EXPECT_EQ("0.00", metric->GetValueAsString());
     }
 }
 
@@ -761,9 +761,9 @@ TEST_F(HTTPSIncomeMetricTest, ComplexWorkloadSimulation) {
             ++(*metric);
         }
         
-        metric->evaluate();
+        metric->Evaluate();
         std::string expected = std::to_string(requests) + ".00";
-        EXPECT_EQ(expected, metric->getValueAsString()) 
+        EXPECT_EQ(expected, metric->GetValueAsString()) 
             << "Phase " << phase << " with " << requests << " requests failed";
     }
 }
@@ -774,19 +774,19 @@ TEST_F(HTTPSIncomeMetricTest, InterleavedOperations) {
             ++(*metric);
         }
         
-        metric->evaluate();
-        EXPECT_EQ("5.00", metric->getValueAsString());
+        metric->Evaluate();
+        EXPECT_EQ("5.00", metric->GetValueAsString());
         
         for (int i = 0; i < 3; ++i) {
             ++(*metric);
         }
         
-        metric->evaluate();
-        EXPECT_EQ("3.00", metric->getValueAsString());
+        metric->Evaluate();
+        EXPECT_EQ("3.00", metric->GetValueAsString());
         
         if (cycle % 3 == 0) {
-            metric->reset();
-            EXPECT_EQ("0.00", metric->getValueAsString());
+            metric->Reset();
+            EXPECT_EQ("0.00", metric->GetValueAsString());
         }
     }
 }
@@ -808,9 +808,9 @@ TEST_F(HTTPSIncomeMetricTest, AtomicIncrementConsistency) {
         t.join();
     }
     
-    metric->evaluate();
+    metric->Evaluate();
     int expected_total = num_threads * increments_per_thread;
-    EXPECT_EQ(std::to_string(expected_total) + ".00", metric->getValueAsString());
+    EXPECT_EQ(std::to_string(expected_total) + ".00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, ConcurrentEvaluateAndIncrement) {
@@ -833,7 +833,7 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentEvaluateAndIncrement) {
                 std::this_thread::yield();
             }
             for (int j = 0; j < 100; ++j) {
-                metric->evaluate();
+                metric->Evaluate();
                 ++evaluation_count;
                 std::this_thread::sleep_for(std::chrono::microseconds(10));
             }
@@ -848,8 +848,8 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentEvaluateAndIncrement) {
     
     EXPECT_EQ(evaluation_count.load(), 400);
     
-    metric->evaluate();
-    std::string value = metric->getValueAsString();
+    metric->Evaluate();
+    std::string value = metric->GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(value));
 }
 
@@ -860,38 +860,38 @@ TEST_F(HTTPSIncomeMetricTest, OverflowHandling) {
         EXPECT_NO_THROW(++overflow_metric);
     }
     
-    overflow_metric.evaluate();
-    std::string value = overflow_metric.getValueAsString();
+    overflow_metric.Evaluate();
+    std::string value = overflow_metric.GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(value));
     EXPECT_GE(std::stod(value), 0.0);
 }
 
 TEST_F(HTTPSIncomeMetricTest, ZeroToNonZeroTransition) {
     for (int i = 0; i < 10; ++i) {
-        metric->evaluate();
-        EXPECT_EQ("0.00", metric->getValueAsString());
+        metric->Evaluate();
+        EXPECT_EQ("0.00", metric->GetValueAsString());
     }
     
     ++(*metric);
-    metric->evaluate();
-    EXPECT_EQ("1.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("1.00", metric->GetValueAsString());
     
-    metric->evaluate();
-    EXPECT_EQ("0.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, DecimalPrecisionEdgeCases) {
     std::vector<int> test_values = {1, 9, 10, 99, 100, 999, 1000, 9999, 10000};
     
     for (int value : test_values) {
-        metric->reset();
+        metric->Reset();
         
         for (int i = 0; i < value; ++i) {
             ++(*metric);
         }
         
-        metric->evaluate();
-        std::string result = metric->getValueAsString();
+        metric->Evaluate();
+        std::string result = metric->GetValueAsString();
         
         EXPECT_TRUE(hasCorrectPrecision(result)) << "Value " << value << " precision test failed";
         
@@ -914,18 +914,18 @@ TEST_F(HTTPSIncomeMetricTest, MultipleInstancesIndependence) {
         ++metric3;
     }
     
-    metric1.evaluate();
-    metric2.evaluate();
-    metric3.evaluate();
+    metric1.Evaluate();
+    metric2.Evaluate();
+    metric3.Evaluate();
     
-    EXPECT_EQ("1.00", metric1.getValueAsString());
-    EXPECT_EQ("5.00", metric2.getValueAsString());
-    EXPECT_EQ("3.00", metric3.getValueAsString());
+    EXPECT_EQ("1.00", metric1.GetValueAsString());
+    EXPECT_EQ("5.00", metric2.GetValueAsString());
+    EXPECT_EQ("3.00", metric3.GetValueAsString());
     
-    metric2.reset();
-    EXPECT_EQ("1.00", metric1.getValueAsString());
-    EXPECT_EQ("0.00", metric2.getValueAsString());
-    EXPECT_EQ("3.00", metric3.getValueAsString());
+    metric2.Reset();
+    EXPECT_EQ("1.00", metric1.GetValueAsString());
+    EXPECT_EQ("0.00", metric2.GetValueAsString());
+    EXPECT_EQ("3.00", metric3.GetValueAsString());
 }
 
 TEST_F(HTTPSIncomeMetricTest, MetricConceptCompliance) {
@@ -948,23 +948,23 @@ TEST_F(HTTPSIncomeMetricTest, ComprehensiveIntegrationTest) {
             ++(*metric);
         }
         
-        metric->evaluate();
-        EXPECT_EQ(std::to_string(operations_per_phase) + ".00", metric->getValueAsString());
+        metric->Evaluate();
+        EXPECT_EQ(std::to_string(operations_per_phase) + ".00", metric->GetValueAsString());
         
         for (int i = 0; i < operations_per_phase / 2; ++i) {
             ++(*metric);
         }
         
-        metric->evaluate();
-        EXPECT_EQ(std::to_string(operations_per_phase / 2) + ".00", metric->getValueAsString());
+        metric->Evaluate();
+        EXPECT_EQ(std::to_string(operations_per_phase / 2) + ".00", metric->GetValueAsString());
         
         if (phase % 3 == 0) {
-            metric->reset();
-            EXPECT_EQ("0.00", metric->getValueAsString());
+            metric->Reset();
+            EXPECT_EQ("0.00", metric->GetValueAsString());
         }
     }
     
     ++(*metric);
-    metric->evaluate();
-    EXPECT_EQ("1.00", metric->getValueAsString());
+    metric->Evaluate();
+    EXPECT_EQ("1.00", metric->GetValueAsString());
 }

@@ -277,9 +277,9 @@ TEST_F(AsyncWriterTest, WriterUtilsBasicMetric) {
     AsyncWriter writer(test_filename_);
     writer.Start();
     
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "CPU_Usage", 45.7));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "Memory_MB", 1024));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "Active", true));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "CPU_Usage", 45.7));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "Memory_MB", 1024));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "Active", true));
     
     writer.Stop();
     
@@ -294,8 +294,8 @@ TEST_F(AsyncWriterTest, WriterUtilsWithTimestamp) {
     AsyncWriter writer(test_filename_);
     writer.Start();
     
-    EXPECT_TRUE(WriterUtils::writeWithTimestamp(writer, "Test message"));
-    EXPECT_TRUE(WriterUtils::writeMetricWithTimestamp(writer, "CPU", 50.0));
+    EXPECT_TRUE(WriterUtils::WriteWithTimestamp(writer, "Test message"));
+    EXPECT_TRUE(WriterUtils::WriteMetricWithTimestamp(writer, "CPU", 50.0));
     
     writer.Stop();
     
@@ -444,14 +444,14 @@ TEST_F(WriterUtilsTest, WriteMetricDifferentTypes) {
     AsyncWriter writer(test_filename_);
     writer.Start();
     
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "IntValue", 42));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "DoubleValue", 3.14159));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "FloatValue", 2.71f));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "BoolTrue", true));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "BoolFalse", false));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "LongValue", 1234567890L));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "StringValue", std::string("test_string")));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "CharValue", 'A'));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "IntValue", 42));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "DoubleValue", 3.14159));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "FloatValue", 2.71f));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "BoolTrue", true));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "BoolFalse", false));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "LongValue", 1234567890L));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "StringValue", std::string("test_string")));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "CharValue", 'A'));
     
     writer.Stop();
     
@@ -471,13 +471,13 @@ TEST_F(WriterUtilsTest, WriteMetricSpecialValues) {
     AsyncWriter writer(test_filename_);
     writer.Start();
     
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "Zero", 0));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "NegativeInt", -42));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "NegativeDouble", -3.14));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "LargeNumber", 999999999999LL));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "EmptyString", std::string("")));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "StringWithSpaces", std::string("hello world")));
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "StringWithSpecialChars", std::string("!@#$%^&*()")));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "Zero", 0));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "NegativeInt", -42));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "NegativeDouble", -3.14));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "LargeNumber", 999999999999LL));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "EmptyString", std::string("")));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "StringWithSpaces", std::string("hello world")));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "StringWithSpecialChars", std::string("!@#$%^&*()")));
     
     writer.Stop();
     
@@ -496,9 +496,9 @@ TEST_F(WriterUtilsTest, WriteWithTimestampBasic) {
     AsyncWriter writer(test_filename_);
     writer.Start();
     
-    EXPECT_TRUE(WriterUtils::writeWithTimestamp(writer, "Simple message"));
-    EXPECT_TRUE(WriterUtils::writeWithTimestamp(writer, ""));
-    EXPECT_TRUE(WriterUtils::writeWithTimestamp(writer, "Message with special chars: !@#"));
+    EXPECT_TRUE(WriterUtils::WriteWithTimestamp(writer, "Simple message"));
+    EXPECT_TRUE(WriterUtils::WriteWithTimestamp(writer, ""));
+    EXPECT_TRUE(WriterUtils::WriteWithTimestamp(writer, "Message with special chars: !@#"));
     
     writer.Stop();
     
@@ -517,10 +517,10 @@ TEST_F(WriterUtilsTest, WriteMetricWithTimestampTypes) {
     AsyncWriter writer(test_filename_);
     writer.Start();
     
-    EXPECT_TRUE(WriterUtils::writeMetricWithTimestamp(writer, "CPU", 45.7));
-    EXPECT_TRUE(WriterUtils::writeMetricWithTimestamp(writer, "Memory", 1024));
-    EXPECT_TRUE(WriterUtils::writeMetricWithTimestamp(writer, "Active", true));
-    EXPECT_TRUE(WriterUtils::writeMetricWithTimestamp(writer, "Status", std::string("running")));
+    EXPECT_TRUE(WriterUtils::WriteMetricWithTimestamp(writer, "CPU", 45.7));
+    EXPECT_TRUE(WriterUtils::WriteMetricWithTimestamp(writer, "Memory", 1024));
+    EXPECT_TRUE(WriterUtils::WriteMetricWithTimestamp(writer, "Active", true));
+    EXPECT_TRUE(WriterUtils::WriteMetricWithTimestamp(writer, "Status", std::string("running")));
     
     writer.Stop();
     
@@ -542,11 +542,11 @@ TEST_F(WriterUtilsTest, WriteFormattedEdgeCases) {
     AsyncWriter writer(test_filename_);
     writer.Start();
     
-    EXPECT_TRUE(WriterUtils::writeFormatted(writer, "{}", 42));
-    EXPECT_TRUE(WriterUtils::writeFormatted(writer, "No placeholders", 42));
-    EXPECT_TRUE(WriterUtils::writeFormatted(writer, "Multiple {} {} {} {}", 1, 2, 3, 4));
-    EXPECT_TRUE(WriterUtils::writeFormatted(writer, "{}{}{})", 1, 2, 3));
-    EXPECT_TRUE(WriterUtils::writeFormatted(writer, "Empty string: {}", std::string("")));
+    EXPECT_TRUE(WriterUtils::WriteFormatted(writer, "{}", 42));
+    EXPECT_TRUE(WriterUtils::WriteFormatted(writer, "No placeholders", 42));
+    EXPECT_TRUE(WriterUtils::WriteFormatted(writer, "Multiple {} {} {} {}", 1, 2, 3, 4));
+    EXPECT_TRUE(WriterUtils::WriteFormatted(writer, "{}{}{})", 1, 2, 3));
+    EXPECT_TRUE(WriterUtils::WriteFormatted(writer, "Empty string: {}", std::string("")));
     
     writer.Stop();
     
@@ -564,7 +564,7 @@ TEST_F(WriterUtilsTest, TimestampFormat) {
     writer.Start();
     
     auto start_time = std::chrono::system_clock::now();
-    EXPECT_TRUE(WriterUtils::writeWithTimestamp(writer, "Time test"));
+    EXPECT_TRUE(WriterUtils::WriteWithTimestamp(writer, "Time test"));
     auto end_time = std::chrono::system_clock::now();
     
     writer.Stop();
@@ -603,16 +603,16 @@ TEST_F(WriterUtilsTest, ConcurrentUtilsUsage) {
             for (int j = 0; j < operations_per_thread; ++j) {
                 switch (j % 4) {
                     case 0:
-                        WriterUtils::writeMetric(writer, "Thread" + std::to_string(i) + "_Metric", j);
+                        WriterUtils::WriteMetric(writer, "Thread" + std::to_string(i) + "_Metric", j);
                         break;
                     case 1:
-                        WriterUtils::writeWithTimestamp(writer, "Thread" + std::to_string(i) + "_Msg_" + std::to_string(j));
+                        WriterUtils::WriteWithTimestamp(writer, "Thread" + std::to_string(i) + "_Msg_" + std::to_string(j));
                         break;
                     case 2:
-                        WriterUtils::writeMetricWithTimestamp(writer, "Thread" + std::to_string(i) + "_TimedMetric", j * 1.5);
+                        WriterUtils::WriteMetricWithTimestamp(writer, "Thread" + std::to_string(i) + "_TimedMetric", j * 1.5);
                         break;
                     case 3:
-                        WriterUtils::writeFormatted(writer, "Thread{}_Formatted_{}", i, j);
+                        WriterUtils::WriteFormatted(writer, "Thread{}_Formatted_{}", i, j);
                         break;
                 }
                 std::this_thread::sleep_for(1ms);
@@ -649,10 +649,10 @@ TEST_F(WriterUtilsTest, ConcurrentUtilsUsage) {
 TEST_F(WriterUtilsTest, WriterUtilsWithInactiveWriter) {
     AsyncWriter writer(test_filename_);
     
-    EXPECT_FALSE(WriterUtils::writeMetric(writer, "Test", 42));
-    EXPECT_FALSE(WriterUtils::writeWithTimestamp(writer, "Test message"));
-    EXPECT_FALSE(WriterUtils::writeMetricWithTimestamp(writer, "Test", 42));
-    EXPECT_FALSE(WriterUtils::writeFormatted(writer, "Test {}", 42));
+    EXPECT_FALSE(WriterUtils::WriteMetric(writer, "Test", 42));
+    EXPECT_FALSE(WriterUtils::WriteWithTimestamp(writer, "Test message"));
+    EXPECT_FALSE(WriterUtils::WriteMetricWithTimestamp(writer, "Test", 42));
+    EXPECT_FALSE(WriterUtils::WriteFormatted(writer, "Test {}", 42));
     
     auto lines = ReadFileLines();
     EXPECT_TRUE(lines.empty());
@@ -662,11 +662,11 @@ TEST_F(WriterUtilsTest, WriterUtilsAfterStop) {
     AsyncWriter writer(test_filename_);
     writer.Start();
     
-    EXPECT_TRUE(WriterUtils::writeMetric(writer, "BeforeStop", 1));
+    EXPECT_TRUE(WriterUtils::WriteMetric(writer, "BeforeStop", 1));
     writer.Stop();
     
-    EXPECT_FALSE(WriterUtils::writeMetric(writer, "AfterStop", 2));
-    EXPECT_FALSE(WriterUtils::writeWithTimestamp(writer, "After stop message"));
+    EXPECT_FALSE(WriterUtils::WriteMetric(writer, "AfterStop", 2));
+    EXPECT_FALSE(WriterUtils::WriteWithTimestamp(writer, "After stop message"));
     
     auto lines = ReadFileLines();
     EXPECT_EQ(lines.size(), 1);
@@ -683,16 +683,16 @@ TEST_F(WriterUtilsTest, PerformanceUtilsTest) {
     for (int i = 0; i < operations_count; ++i) {
         switch (i % 4) {
             case 0:
-                WriterUtils::writeMetric(writer, "Perf_Metric", i);
+                WriterUtils::WriteMetric(writer, "Perf_Metric", i);
                 break;
             case 1:
-                WriterUtils::writeWithTimestamp(writer, "Perf message " + std::to_string(i));
+                WriterUtils::WriteWithTimestamp(writer, "Perf message " + std::to_string(i));
                 break;
             case 2:
-                WriterUtils::writeMetricWithTimestamp(writer, "Perf_TimedMetric", i * 0.1);
+                WriterUtils::WriteMetricWithTimestamp(writer, "Perf_TimedMetric", i * 0.1);
                 break;
             case 3:
-                WriterUtils::writeFormatted(writer, "Perf formatted {}", i);
+                WriterUtils::WriteFormatted(writer, "Perf formatted {}", i);
                 break;
         }
     }

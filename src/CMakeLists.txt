@@ -24,6 +24,8 @@ add_library(
     IMetrics/HTTPIncomeMetric.h
     IMetrics/CPUMetric.cpp
     IMetrics/HTTPIncomeMetric.cpp
+    IMetrics/LatencyMetric.h
+    IMetrics/LatencyMetric.cpp
 )
 
 target_include_directories(

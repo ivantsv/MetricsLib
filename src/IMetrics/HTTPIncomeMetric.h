@@ -13,10 +13,10 @@ namespace Metrics {
         
     public:
         HTTPSIncomeMetric(unsigned long long start=0);
-        std::string getName() const noexcept override;
-        std::string getValueAsString() const override;
-        void evaluate() noexcept override;
-        void reset() noexcept override;
+        std::string GetName() const noexcept override;
+        std::string GetValueAsString() const override;
+        void Evaluate() noexcept override;
+        void Reset() noexcept override;
         
         HTTPSIncomeMetric& operator++(int) noexcept;
         HTTPSIncomeMetric& operator++() noexcept;
