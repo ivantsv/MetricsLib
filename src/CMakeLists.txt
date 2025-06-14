@@ -30,6 +30,8 @@ add_library(
     IMetrics/CPUUsageMetric.cpp
     IMetrics/CodeTimeMetric.h
     IMetrics/CodeTimeMetric.cpp
+    IMetrics/IncrementMetric.h
+    IMetrics/IncrementMetric.cpp
 )
 
 target_include_directories(

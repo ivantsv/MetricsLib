@@ -7,7 +7,7 @@ using namespace Metrics;
 
 std::string CodeTimeMetric::CreateDefaultName() {
     std::lock_guard<std::mutex> lock(counter_mutex_);
-    return "\"Algorithm " + std::to_string(++counter) + " \"";
+    return "\"Algorithm " + std::to_string(++counter) + "\"";
 }
 
 CodeTimeMetric::CodeTimeMetric(const std::string& name)
