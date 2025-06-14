@@ -4,7 +4,7 @@
 #include <random>
 #include <atomic>
 
-#include "IMetrics/IMetrics.h"
+#include "IMetrics/CPUMetric.h"
 #include "MultiThreadWriter/Writer.h"
 #include "MultiThreadWriter/WriterUtils.h"
 

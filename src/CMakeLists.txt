@@ -4,6 +4,13 @@ set(BUILD_SHARED_LIBS OFF)
 
 cmake_minimum_required(VERSION 3.10)
 
+FetchContent_Declare(
+    hdr_histogram
+    GIT_REPOSITORY https://github.com/HdrHistogram/HdrHistogram_c
+    GIT_TAG 0.11.8
+)
+FetchContent_MakeAvailable(hdr_histogram)
+
 add_library(
     NonBlockingWriter
     MultiThreadWriter/Writer.cpp
@@ -12,8 +19,11 @@ add_library(
 
 add_library(
     IMetrics
-    IMetrics/IMetrics.cpp
     IMetrics/IMetrics.h
+    IMetrics/CPUMetric.h
+    IMetrics/HTTPIncomeMetric.h
+    IMetrics/CPUMetric.cpp
+    IMetrics/HTTPIncomeMetric.cpp
 )
 
 target_include_directories(
@@ -30,6 +40,8 @@ target_link_libraries(NonBlockingWriter PUBLIC Threads::Threads)
 
 target_compile_features(NonBlockingWriter PUBLIC cxx_std_23)
 target_compile_features(IMetrics PUBLIC cxx_std_23)
+
+target_link_libraries(IMetrics PUBLIC hdr_histogram)
 
 target_compile_options(
     NonBlockingWriter PRIVATE
