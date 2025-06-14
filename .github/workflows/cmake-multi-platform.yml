@@ -46,9 +46,15 @@ jobs:
     - name: Setup MSVC (Windows)
       if: runner.os == 'Windows'
       uses: microsoft/setup-msbuild@v1.1
+      
+    - name: Install vcpkg dependencies
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git
+        .\vcpkg\bootstrap-vcpkg.bat
+        .\vcpkg\vcpkg.exe install zlib
 
     - name: Configure CMake
-      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
 
     - name: Build Project
       run: cmake --build build --config Release -j
