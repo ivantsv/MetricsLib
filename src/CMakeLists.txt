@@ -32,9 +32,10 @@ add_library(
     IMetrics/CodeTimeMetric.cpp
     IMetrics/IncrementMetric.h
     IMetrics/IncrementMetric.cpp
-    IMetrics/CardinalityMetricAny.h
-    IMetrics/CardinalityMetricAny.cpp
+    IMetrics/CardinalityMetricType.h
+    IMetrics/CardinalityMetricType.cpp
     IMetrics/MyAny.h
+    IMetrics/CardinalityMetricValue.h
 )
 
 target_include_directories(

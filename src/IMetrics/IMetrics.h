@@ -4,6 +4,7 @@
 #include <type_traits>
 
 namespace Metrics {
+    
     class IMetric {
     public:
         IMetric() = default;

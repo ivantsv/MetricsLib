@@ -9,9 +9,9 @@
 
 namespace Metrics {
     
-    class CardinalityMetricAny final : public IMetric {
+    class CardinalityMetricType final : public IMetric {
     public:
-        CardinalityMetricAny(int n_top = 5);
+        CardinalityMetricType(int n_top = 5);
         std::string GetName() const noexcept override;
         std::string GetValueAsString() const override;
         void Evaluate() override;

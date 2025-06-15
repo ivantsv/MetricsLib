@@ -142,6 +142,20 @@ target_link_libraries(
 
 target_include_directories(cardinality_metric_any_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
+add_executable(
+    cardinality_value_tests
+    cardinality_value_tests.cpp
+)
+
+target_link_libraries(
+    cardinality_value_tests
+    GTest::gtest_main
+    GTest::gmock_main
+    IMetrics
+)
+
+target_include_directories(cardinality_value_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
+
 include(GoogleTest)
 
 gtest_discover_tests(cpu_metric_tests)
@@ -153,3 +167,4 @@ gtest_discover_tests(code_time_tests)
 gtest_discover_tests(increment_metric_tests)
 gtest_discover_tests(my_any_tests)
 gtest_discover_tests(cardinality_metric_any_tests)
+gtest_discover_tests(cardinality_value_tests)

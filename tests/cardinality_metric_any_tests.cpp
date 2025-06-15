@@ -4,82 +4,82 @@
 #include <chrono>
 #include <string>
 #include <memory>
-#include "../src/IMetrics/CardinalityMetricAny.h"
+#include "../src/IMetrics/CardinalityMetricType.h"
 
-class CardinalityMetricAnyTest : public ::testing::Test {
+class CardinalityMetricTypeTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        metric = std::make_unique<Metrics::CardinalityMetricAny>(3);
+        metric = std::make_unique<Metrics::CardinalityMetricType>(3);
     }
 
     void TearDown() override {
         metric.reset();
     }
 
-    std::unique_ptr<Metrics::CardinalityMetricAny> metric;
+    std::unique_ptr<Metrics::CardinalityMetricType> metric;
 };
 
-TEST_F(CardinalityMetricAnyTest, DefaultConstructor) {
-    EXPECT_NO_THROW(Metrics::CardinalityMetricAny());
+TEST_F(CardinalityMetricTypeTest, DefaultConstructor) {
+    EXPECT_NO_THROW(Metrics::CardinalityMetricType());
 }
 
-TEST_F(CardinalityMetricAnyTest, ConstructorWithNTop) {
-    EXPECT_NO_THROW(Metrics::CardinalityMetricAny(5));
+TEST_F(CardinalityMetricTypeTest, ConstructorWithNTop) {
+    EXPECT_NO_THROW(Metrics::CardinalityMetricType(5));
 }
 
-TEST_F(CardinalityMetricAnyTest, ConstructorWithZeroNTop) {
-    EXPECT_NO_THROW(Metrics::CardinalityMetricAny(0));
+TEST_F(CardinalityMetricTypeTest, ConstructorWithZeroNTop) {
+    EXPECT_NO_THROW(Metrics::CardinalityMetricType(0));
 }
 
-TEST_F(CardinalityMetricAnyTest, ConstructorWithNegativeNTop) {
-    EXPECT_NO_THROW(Metrics::CardinalityMetricAny(-1));
+TEST_F(CardinalityMetricTypeTest, ConstructorWithNegativeNTop) {
+    EXPECT_NO_THROW(Metrics::CardinalityMetricType(-1));
 }
 
-TEST_F(CardinalityMetricAnyTest, GetNameReturnsCardinality) {
-    EXPECT_EQ(metric->GetName(), "\"Cardinality\"");
+TEST_F(CardinalityMetricTypeTest, GetNameReturnsCardinality) {
+    EXPECT_EQ(metric->GetName(), "\"CardinalityType\"");
 }
 
-TEST_F(CardinalityMetricAnyTest, GetNameIsConsistent) {
+TEST_F(CardinalityMetricTypeTest, GetNameIsConsistent) {
     std::string name1 = metric->GetName();
     std::string name2 = metric->GetName();
     EXPECT_EQ(name1, name2);
 }
 
-TEST_F(CardinalityMetricAnyTest, InitialValueIsZero) {
+TEST_F(CardinalityMetricTypeTest, InitialValueIsZero) {
     std::string value = metric->GetValueAsString();
     EXPECT_TRUE(value.find("0") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, GetValueAsStringFormat) {
+TEST_F(CardinalityMetricTypeTest, GetValueAsStringFormat) {
     std::string value = metric->GetValueAsString();
     EXPECT_TRUE(value.find("General number of unique elements:") != std::string::npos);
     EXPECT_TRUE(value.find("most frequent types:") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, GetValueAsStringShowsNTop) {
+TEST_F(CardinalityMetricTypeTest, GetValueAsStringShowsNTop) {
     std::string value = metric->GetValueAsString();
     EXPECT_TRUE(value.find("3 most frequent types:") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveIntegerSingleItem) {
+TEST_F(CardinalityMetricTypeTest, ObserveIntegerSingleItem) {
     metric->Observe(42);
     std::string value = metric->GetValueAsString();
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveStringSingleItem) {
+TEST_F(CardinalityMetricTypeTest, ObserveStringSingleItem) {
     metric->Observe(std::string("hello"));
     std::string value = metric->GetValueAsString();
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveDoubleSingleItem) {
+TEST_F(CardinalityMetricTypeTest, ObserveDoubleSingleItem) {
     metric->Observe(3.14);
     std::string value = metric->GetValueAsString();
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveMultipleDifferentIntegers) {
+TEST_F(CardinalityMetricTypeTest, ObserveMultipleDifferentIntegers) {
     metric->Observe(1);
     metric->Observe(2);
     metric->Observe(3);
@@ -87,7 +87,7 @@ TEST_F(CardinalityMetricAnyTest, ObserveMultipleDifferentIntegers) {
     EXPECT_TRUE(value.find("3") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveMultipleDifferentStrings) {
+TEST_F(CardinalityMetricTypeTest, ObserveMultipleDifferentStrings) {
     metric->Observe(std::string("hello"));
     metric->Observe(std::string("world"));
     metric->Observe(std::string("test"));
@@ -95,7 +95,7 @@ TEST_F(CardinalityMetricAnyTest, ObserveMultipleDifferentStrings) {
     EXPECT_TRUE(value.find("3") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveMixedTypes) {
+TEST_F(CardinalityMetricTypeTest, ObserveMixedTypes) {
     metric->Observe(42);
     metric->Observe(std::string("hello"));
     metric->Observe(3.14);
@@ -103,7 +103,7 @@ TEST_F(CardinalityMetricAnyTest, ObserveMixedTypes) {
     EXPECT_TRUE(value.find("3") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveDuplicateIntegers) {
+TEST_F(CardinalityMetricTypeTest, ObserveDuplicateIntegers) {
     metric->Observe(42);
     metric->Observe(42);
     metric->Observe(42);
@@ -111,39 +111,39 @@ TEST_F(CardinalityMetricAnyTest, ObserveDuplicateIntegers) {
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveDuplicateStrings) {
+TEST_F(CardinalityMetricTypeTest, ObserveDuplicateStrings) {
     metric->Observe(std::string("hello"));
     metric->Observe(std::string("hello"));
     std::string value = metric->GetValueAsString();
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveWithCustomCount) {
+TEST_F(CardinalityMetricTypeTest, ObserveWithCustomCount) {
     metric->Observe(42, 5);
     std::string value = metric->GetValueAsString();
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveWithCountAccumulation) {
+TEST_F(CardinalityMetricTypeTest, ObserveWithCountAccumulation) {
     metric->Observe(42, 3);
     metric->Observe(42, 2);
     std::string value = metric->GetValueAsString();
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveZeroCount) {
+TEST_F(CardinalityMetricTypeTest, ObserveZeroCount) {
     metric->Observe(42, 0);
     std::string value = metric->GetValueAsString();
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveNegativeCount) {
+TEST_F(CardinalityMetricTypeTest, ObserveNegativeCount) {
     metric->Observe(42, -1);
     std::string value = metric->GetValueAsString();
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, TopTypesOrderingByFrequency) {
+TEST_F(CardinalityMetricTypeTest, TopTypesOrderingByFrequency) {
     metric->Observe(42, 10);        
     metric->Observe(3.14, 5);      
     metric->Observe(std::string("hello"), 15);
@@ -157,8 +157,8 @@ TEST_F(CardinalityMetricAnyTest, TopTypesOrderingByFrequency) {
     EXPECT_TRUE(string_pos != std::string::npos || int_pos != std::string::npos || double_pos != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, TopTypesLimitedByNTop) {
-    auto metric_ntop_2 = std::make_unique<Metrics::CardinalityMetricAny>(2);
+TEST_F(CardinalityMetricTypeTest, TopTypesLimitedByNTop) {
+    auto metric_ntop_2 = std::make_unique<Metrics::CardinalityMetricType>(2);
     
     metric_ntop_2->Observe(42);
     metric_ntop_2->Observe(3.14);
@@ -170,8 +170,8 @@ TEST_F(CardinalityMetricAnyTest, TopTypesLimitedByNTop) {
     EXPECT_TRUE(value.find("2 most frequent types:") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, TopTypesWithZeroNTop) {
-    auto metric_ntop_0 = std::make_unique<Metrics::CardinalityMetricAny>(0);
+TEST_F(CardinalityMetricTypeTest, TopTypesWithZeroNTop) {
+    auto metric_ntop_0 = std::make_unique<Metrics::CardinalityMetricType>(0);
     
     metric_ntop_0->Observe(42);
     metric_ntop_0->Observe(3.14);
@@ -181,11 +181,11 @@ TEST_F(CardinalityMetricAnyTest, TopTypesWithZeroNTop) {
     EXPECT_TRUE(value.find("0 most frequent types:") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, EvaluateDoesNotThrow) {
+TEST_F(CardinalityMetricTypeTest, EvaluateDoesNotThrow) {
     EXPECT_NO_THROW(metric->Evaluate());
 }
 
-TEST_F(CardinalityMetricAnyTest, EvaluateDoesNotChangeValue) {
+TEST_F(CardinalityMetricTypeTest, EvaluateDoesNotChangeValue) {
     metric->Observe(42);
     std::string value_before = metric->GetValueAsString();
     metric->Evaluate();
@@ -193,7 +193,7 @@ TEST_F(CardinalityMetricAnyTest, EvaluateDoesNotChangeValue) {
     EXPECT_EQ(value_before, value_after);
 }
 
-TEST_F(CardinalityMetricAnyTest, ResetClearsItems) {
+TEST_F(CardinalityMetricTypeTest, ResetClearsItems) {
     metric->Observe(1);
     metric->Observe(2);
     metric->Observe(3);
@@ -202,11 +202,11 @@ TEST_F(CardinalityMetricAnyTest, ResetClearsItems) {
     EXPECT_TRUE(value.find("0") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ResetDoesNotThrow) {
+TEST_F(CardinalityMetricTypeTest, ResetDoesNotThrow) {
     EXPECT_NO_THROW(metric->Reset());
 }
 
-TEST_F(CardinalityMetricAnyTest, ResetAfterObserve) {
+TEST_F(CardinalityMetricTypeTest, ResetAfterObserve) {
     metric->Observe(42);
     metric->Reset();
     metric->Observe(24);
@@ -214,15 +214,15 @@ TEST_F(CardinalityMetricAnyTest, ResetAfterObserve) {
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, WorksThroughIMetricPointer) {
-    std::unique_ptr<Metrics::IMetric> base_ptr = std::make_unique<Metrics::CardinalityMetricAny>(3);
+TEST_F(CardinalityMetricTypeTest, WorksThroughIMetricPointer) {
+    std::unique_ptr<Metrics::IMetric> base_ptr = std::make_unique<Metrics::CardinalityMetricType>(3);
     EXPECT_NO_THROW(base_ptr->GetName());
     EXPECT_NO_THROW(base_ptr->GetValueAsString());
     EXPECT_NO_THROW(base_ptr->Evaluate());
     EXPECT_NO_THROW(base_ptr->Reset());
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveComplexObject) {
+TEST_F(CardinalityMetricTypeTest, ObserveComplexObject) {
     struct TestStruct {
         int x;
         std::string y;
@@ -236,14 +236,14 @@ TEST_F(CardinalityMetricAnyTest, ObserveComplexObject) {
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObserveVector) {
+TEST_F(CardinalityMetricTypeTest, ObserveVector) {
     std::vector<int> vec{1, 2, 3};
     metric->Observe(vec);
     std::string value = metric->GetValueAsString();
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ObservePointer) {
+TEST_F(CardinalityMetricTypeTest, ObservePointer) {
     int value = 42;
     int* ptr = &value;
     metric->Observe(ptr);
@@ -251,7 +251,7 @@ TEST_F(CardinalityMetricAnyTest, ObservePointer) {
     EXPECT_TRUE(result.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, LargeNumberOfUniqueItems) {
+TEST_F(CardinalityMetricTypeTest, LargeNumberOfUniqueItems) {
     for (int i = 0; i < 1000; ++i) {
         metric->Observe(i);
     }
@@ -259,7 +259,7 @@ TEST_F(CardinalityMetricAnyTest, LargeNumberOfUniqueItems) {
     EXPECT_TRUE(value.find("1000") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, LargeNumberOfDuplicateItems) {
+TEST_F(CardinalityMetricTypeTest, LargeNumberOfDuplicateItems) {
     for (int i = 0; i < 1000; ++i) {
         metric->Observe(42);
     }
@@ -267,7 +267,7 @@ TEST_F(CardinalityMetricAnyTest, LargeNumberOfDuplicateItems) {
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ConcurrentObserveDifferentItems) {
+TEST_F(CardinalityMetricTypeTest, ConcurrentObserveDifferentItems) {
     const int num_threads = 10;
     const int items_per_thread = 100;
     std::vector<std::thread> threads;
@@ -289,7 +289,7 @@ TEST_F(CardinalityMetricAnyTest, ConcurrentObserveDifferentItems) {
     EXPECT_TRUE(value.find(std::to_string(expected_count)) != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ConcurrentObserveSameItem) {
+TEST_F(CardinalityMetricTypeTest, ConcurrentObserveSameItem) {
     const int num_threads = 10;
     const int observations_per_thread = 100;
     std::vector<std::thread> threads;
@@ -310,7 +310,7 @@ TEST_F(CardinalityMetricAnyTest, ConcurrentObserveSameItem) {
     EXPECT_TRUE(value.find("1") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ConcurrentObserveMixedTypes) {
+TEST_F(CardinalityMetricTypeTest, ConcurrentObserveMixedTypes) {
     const int num_threads = 8;
     const int operations_per_thread = 50;
     std::vector<std::thread> threads;
@@ -336,7 +336,7 @@ TEST_F(CardinalityMetricAnyTest, ConcurrentObserveMixedTypes) {
     EXPECT_FALSE(value.empty());
 }
 
-TEST_F(CardinalityMetricAnyTest, ConcurrentGetValueAsString) {
+TEST_F(CardinalityMetricTypeTest, ConcurrentGetValueAsString) {
     const int num_threads = 10;
     const int reads_per_thread = 50;
     std::vector<std::thread> threads;
@@ -369,7 +369,7 @@ TEST_F(CardinalityMetricAnyTest, ConcurrentGetValueAsString) {
     }
 }
 
-TEST_F(CardinalityMetricAnyTest, ConcurrentObserveAndRead) {
+TEST_F(CardinalityMetricTypeTest, ConcurrentObserveAndRead) {
     const int num_observe_threads = 5;
     const int num_read_threads = 5;
     const int operations_per_thread = 100;
@@ -403,7 +403,7 @@ TEST_F(CardinalityMetricAnyTest, ConcurrentObserveAndRead) {
     EXPECT_TRUE(final_value.find(std::to_string(expected_count)) != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ConcurrentReset) {
+TEST_F(CardinalityMetricTypeTest, ConcurrentReset) {
     const int num_threads = 10;
     const int operations_per_thread = 20;
     std::vector<std::thread> threads;
@@ -430,7 +430,7 @@ TEST_F(CardinalityMetricAnyTest, ConcurrentReset) {
     EXPECT_TRUE(final_value.find("General number of unique elements:") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, ConcurrentObserveWithCounts) {
+TEST_F(CardinalityMetricTypeTest, ConcurrentObserveWithCounts) {
     const int num_threads = 8;
     const int operations_per_thread = 50;
     std::vector<std::thread> threads;
@@ -452,7 +452,7 @@ TEST_F(CardinalityMetricAnyTest, ConcurrentObserveWithCounts) {
     EXPECT_TRUE(value.find(std::to_string(num_threads)) != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyTest, HighVolumeOperations) {
+TEST_F(CardinalityMetricTypeTest, HighVolumeOperations) {
     const int num_operations = 10000;
     
     auto start = std::chrono::high_resolution_clock::now();
@@ -468,16 +468,16 @@ TEST_F(CardinalityMetricAnyTest, HighVolumeOperations) {
     EXPECT_TRUE(value.find("100") != std::string::npos);
 }
 
-class CardinalityMetricAnyStressTest : public ::testing::Test {
+class CardinalityMetricTypeStressTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        metric = std::make_unique<Metrics::CardinalityMetricAny>(5);
+        metric = std::make_unique<Metrics::CardinalityMetricType>(5);
     }
 
-    std::unique_ptr<Metrics::CardinalityMetricAny> metric;
+    std::unique_ptr<Metrics::CardinalityMetricType> metric;
 };
 
-TEST_F(CardinalityMetricAnyStressTest, MassiveConcurrentOperations) {
+TEST_F(CardinalityMetricTypeStressTest, MassiveConcurrentOperations) {
     const int num_threads = 20;
     const int operations_per_thread = 500;
     std::vector<std::thread> threads;
@@ -505,8 +505,8 @@ TEST_F(CardinalityMetricAnyStressTest, MassiveConcurrentOperations) {
     EXPECT_TRUE(final_value.find("General number of unique elements:") != std::string::npos);
 }
 
-TEST_F(CardinalityMetricAnyStressTest, EdgeCaseNTopValues) {
-    auto metric_large_ntop = std::make_unique<Metrics::CardinalityMetricAny>(1000);
+TEST_F(CardinalityMetricTypeStressTest, EdgeCaseNTopValues) {
+    auto metric_large_ntop = std::make_unique<Metrics::CardinalityMetricType>(1000);
     
     metric_large_ntop->Observe(1);
     metric_large_ntop->Observe(2.0);

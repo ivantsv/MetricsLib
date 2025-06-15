@@ -1,5 +1,6 @@
-#include "CardinalityMetricAny.h"
+#include "CardinalityMetricType.h"
 #include "IMetrics/MyAny.h"
+#include "Demangle.h"
 
 #include <sstream>
 #include <string>
@@ -8,13 +9,13 @@
 
 using namespace Metrics;
 
-CardinalityMetricAny::CardinalityMetricAny(int n_top) : n_top_(n_top) {}
+CardinalityMetricType::CardinalityMetricType(int n_top) : n_top_(n_top) {}
 
-std::string CardinalityMetricAny::GetName() const noexcept {
-    return "\"Cardinality\"";
+std::string CardinalityMetricType::GetName() const noexcept {
+    return "\"CardinalityType\"";
 }
 
-std::string CardinalityMetricAny::GetValueAsString() const {
+std::string CardinalityMetricType::GetValueAsString() const {
     std::lock_guard<std::mutex> lock(mutex_);
     std::ostringstream oss;
     oss << "General number of unique elements: " << observed_items_.size() << '\n';
@@ -32,15 +33,15 @@ std::string CardinalityMetricAny::GetValueAsString() const {
     
     int steps = std::min(n_top_, (int)sorted_items.size());
     for (int i = 0; i < steps; ++i) {
-        oss << sorted_items[i].first.type().name() << " ";
+        oss << demangle(sorted_items[i].first.type().name()) << " ";
     }
     
     return oss.str();
 }
 
-void CardinalityMetricAny::Evaluate() {}
+void CardinalityMetricType::Evaluate() {}
 
-void CardinalityMetricAny::Reset() {
+void CardinalityMetricType::Reset() {
     std::lock_guard<std::mutex> lock(mutex_);
     observed_items_.clear();
 }
