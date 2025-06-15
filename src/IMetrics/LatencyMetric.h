@@ -9,6 +9,8 @@
 namespace Metrics {
  class LatencyMetric final : public IMetric {
  public:
+    using tag = MetricTags::ComputerMetricTag;
+ 
     LatencyMetric();
     ~LatencyMetric() override;
     std::string GetName() const noexcept override;

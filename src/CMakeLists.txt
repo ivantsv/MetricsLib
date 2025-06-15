@@ -36,6 +36,7 @@ add_library(
     IMetrics/CardinalityMetricType.cpp
     IMetrics/MyAny.h
     IMetrics/CardinalityMetricValue.h
+    IMetrics/MetricsTags.h
 )
 
 target_include_directories(
@@ -53,6 +54,7 @@ target_link_libraries(NonBlockingWriter PUBLIC Threads::Threads)
 target_compile_features(NonBlockingWriter PUBLIC cxx_std_23)
 target_compile_features(IMetrics PUBLIC cxx_std_23)
 
+target_link_libraries(IMetrics PUBLIC NonBlockingWriter)
 target_link_libraries(IMetrics PUBLIC hdr_histogram_static)
 
 target_compile_options(

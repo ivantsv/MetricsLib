@@ -12,6 +12,8 @@ namespace Metrics {
         std::atomic<unsigned long long> last_evaluated_counter_;
         
     public:
+        using tag = MetricTags::ServerMetricTag;
+    
         HTTPSIncomeMetric(unsigned long long start=0);
         std::string GetName() const noexcept override;
         std::string GetValueAsString() const override;

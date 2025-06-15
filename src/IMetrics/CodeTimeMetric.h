@@ -14,6 +14,8 @@ namespace Metrics {
         static inline std::mutex counter_mutex_;
         static std::string CreateDefaultName();
     public:
+        using tag = MetricTags::AlgoMetricTag;
+    
         CodeTimeMetric(const std::string& name=CreateDefaultName());
         
         std::string GetName() const noexcept override;

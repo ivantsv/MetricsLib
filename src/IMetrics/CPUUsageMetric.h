@@ -27,6 +27,8 @@ namespace Metrics {
 
 class CPUUsageMetric final : public IMetric {
 public:
+    using tag = MetricTags::ComputerMetricTag;
+
     CPUUsageMetric();
 
     std::string GetName() const noexcept override;

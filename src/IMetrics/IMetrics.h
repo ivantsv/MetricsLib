@@ -3,10 +3,14 @@
 #include <string>
 #include <type_traits>
 
+#include "MetricsTags.h"
+
 namespace Metrics {
     
     class IMetric {
     public:
+        using tag = MetricTags::DefaultMetricTag;
+    
         IMetric() = default;
         virtual ~IMetric() = default;
         virtual std::string GetName() const = 0;

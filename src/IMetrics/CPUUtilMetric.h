@@ -21,6 +21,8 @@ namespace Metrics {
     #endif
         
     public:
+        using tag = MetricTags::ComputerMetricTag;
+    
         CPUMetric();
         std::string GetName() const noexcept override;
         std::string GetValueAsString() const override;
