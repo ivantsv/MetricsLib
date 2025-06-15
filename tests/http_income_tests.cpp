@@ -12,17 +12,17 @@
 
 using namespace Metrics;
 
-class HTTPSIncomeMetricTest : public ::testing::Test {
+class HTTPIncomeMetricTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        metric = std::make_unique<HTTPSIncomeMetric>();
+        metric = std::make_unique<HTTPIncomeMetric>();
     }
 
     void TearDown() override {
         metric->Reset();
     }
 
-    std::unique_ptr<HTTPSIncomeMetric> metric;
+    std::unique_ptr<HTTPIncomeMetric> metric;
 
     bool isValidDoubleString(const std::string& str) {
         try {
@@ -42,7 +42,7 @@ protected:
         return decimal_part.length() == 2;
     }
 
-    void simulateHttpRequests(HTTPSIncomeMetric& metric, int request_count, int delay_ms = 0) {
+    void simulateHttpRequests(HTTPIncomeMetric& metric, int request_count, int delay_ms = 0) {
         for (int i = 0; i < request_count; ++i) {
             ++metric;
             if (delay_ms > 0) {
@@ -51,7 +51,7 @@ protected:
         }
     }
 
-    void simulateHttpRequestsBurst(HTTPSIncomeMetric& metric, int burst_count, int requests_per_burst, int burst_interval_ms) {
+    void simulateHttpRequestsBurst(HTTPIncomeMetric& metric, int burst_count, int requests_per_burst, int burst_interval_ms) {
         for (int i = 0; i < burst_count; ++i) {
             for (int j = 0; j < requests_per_burst; ++j) {
                 ++metric;
@@ -63,44 +63,44 @@ protected:
     }
 };
 
-TEST_F(HTTPSIncomeMetricTest, ConstructorDoesNotThrow) {
+TEST_F(HTTPIncomeMetricTest, ConstructorDoesNotThrow) {
     EXPECT_NO_THROW({
-        HTTPSIncomeMetric test_metric;
+        HTTPIncomeMetric test_metric;
     });
 }
 
-TEST_F(HTTPSIncomeMetricTest, ConstructorWithStartValueDoesNotThrow) {
+TEST_F(HTTPIncomeMetricTest, ConstructorWithStartValueDoesNotThrow) {
     EXPECT_NO_THROW({
-        HTTPSIncomeMetric test_metric(100);
+        HTTPIncomeMetric test_metric(100);
     });
 }
 
-TEST_F(HTTPSIncomeMetricTest, ConstructorInitializesValidState) {
+TEST_F(HTTPIncomeMetricTest, ConstructorInitializesValidState) {
     std::string initial_value = metric->GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(initial_value));
     EXPECT_TRUE(hasCorrectPrecision(initial_value));
     EXPECT_EQ("0.00", initial_value);
 }
 
-TEST_F(HTTPSIncomeMetricTest, ConstructorWithStartValueInitializesCorrectly) {
-    HTTPSIncomeMetric custom_metric(50);
+TEST_F(HTTPIncomeMetricTest, ConstructorWithStartValueInitializesCorrectly) {
+    HTTPIncomeMetric custom_metric(50);
     std::string initial_value = custom_metric.GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(initial_value));
     EXPECT_TRUE(hasCorrectPrecision(initial_value));
     EXPECT_EQ("0.00", initial_value);
 }
 
-TEST_F(HTTPSIncomeMetricTest, GetNameReturnsCorrectName) {
+TEST_F(HTTPIncomeMetricTest, GetNameReturnsCorrectName) {
     EXPECT_EQ("\"HTTPS requests RPS\"", metric->GetName());
 }
 
-TEST_F(HTTPSIncomeMetricTest, GetNameIsConsistent) {
+TEST_F(HTTPIncomeMetricTest, GetNameIsConsistent) {
     for (int i = 0; i < 5; ++i) {
         EXPECT_EQ("\"HTTPS requests RPS\"", metric->GetName());
     }
 }
 
-TEST_F(HTTPSIncomeMetricTest, GetNameUnchangedAfterOperations) {
+TEST_F(HTTPIncomeMetricTest, GetNameUnchangedAfterOperations) {
     ++(*metric);
     metric->Evaluate();
     EXPECT_EQ("\"HTTPS requests RPS\"", metric->GetName());
@@ -109,23 +109,23 @@ TEST_F(HTTPSIncomeMetricTest, GetNameUnchangedAfterOperations) {
     EXPECT_EQ("\"HTTPS requests RPS\"", metric->GetName());
 }
 
-TEST_F(HTTPSIncomeMetricTest, GetValueAsStringReturnsValidDouble) {
+TEST_F(HTTPIncomeMetricTest, GetValueAsStringReturnsValidDouble) {
     std::string value_str = metric->GetValueAsString();
     EXPECT_TRUE(isValidDoubleString(value_str));
 }
 
-TEST_F(HTTPSIncomeMetricTest, GetValueAsStringHasCorrectPrecision) {
+TEST_F(HTTPIncomeMetricTest, GetValueAsStringHasCorrectPrecision) {
     std::string value_str = metric->GetValueAsString();
     EXPECT_TRUE(hasCorrectPrecision(value_str));
 }
 
-TEST_F(HTTPSIncomeMetricTest, GetValueAsStringReturnsNonNegative) {
+TEST_F(HTTPIncomeMetricTest, GetValueAsStringReturnsNonNegative) {
     std::string value_str = metric->GetValueAsString();
     double value = std::stod(value_str);
     EXPECT_GE(value, 0.0);
 }
 
-TEST_F(HTTPSIncomeMetricTest, GetValueAsStringMatchesExpectedFormat) {
+TEST_F(HTTPIncomeMetricTest, GetValueAsStringMatchesExpectedFormat) {
     ++(*metric);
     metric->Evaluate();
     
@@ -137,23 +137,23 @@ TEST_F(HTTPSIncomeMetricTest, GetValueAsStringMatchesExpectedFormat) {
     EXPECT_EQ(expected_format.str(), value_str);
 }
 
-TEST_F(HTTPSIncomeMetricTest, PreIncrementDoesNotThrow) {
+TEST_F(HTTPIncomeMetricTest, PreIncrementDoesNotThrow) {
     EXPECT_NO_THROW(++(*metric));
 }
 
-TEST_F(HTTPSIncomeMetricTest, PostIncrementDoesNotThrow) {
+TEST_F(HTTPIncomeMetricTest, PostIncrementDoesNotThrow) {
     EXPECT_NO_THROW((*metric)++);
 }
 
-TEST_F(HTTPSIncomeMetricTest, IncrementReturnsReference) {
-    HTTPSIncomeMetric& ref1 = ++(*metric);
-    HTTPSIncomeMetric& ref2 = (*metric)++;
+TEST_F(HTTPIncomeMetricTest, IncrementReturnsReference) {
+    HTTPIncomeMetric& ref1 = ++(*metric);
+    HTTPIncomeMetric& ref2 = (*metric)++;
     
     EXPECT_EQ(&ref1, metric.get());
     EXPECT_EQ(&ref2, metric.get());
 }
 
-TEST_F(HTTPSIncomeMetricTest, MultipleIncrementsWork) {
+TEST_F(HTTPIncomeMetricTest, MultipleIncrementsWork) {
     EXPECT_NO_THROW({
         for (int i = 0; i < 100; ++i) {
             ++(*metric);
@@ -161,16 +161,16 @@ TEST_F(HTTPSIncomeMetricTest, MultipleIncrementsWork) {
     });
 }
 
-TEST_F(HTTPSIncomeMetricTest, EvaluateDoesNotThrow) {
+TEST_F(HTTPIncomeMetricTest, EvaluateDoesNotThrow) {
     EXPECT_NO_THROW(metric->Evaluate());
 }
 
-TEST_F(HTTPSIncomeMetricTest, EvaluateAfterNoRequestsReturnsZero) {
+TEST_F(HTTPIncomeMetricTest, EvaluateAfterNoRequestsReturnsZero) {
     metric->Evaluate();
     EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, EvaluateCalculatesCorrectRPS) {
+TEST_F(HTTPIncomeMetricTest, EvaluateCalculatesCorrectRPS) {
     for (int i = 0; i < 5; ++i) {
         ++(*metric);
     }
@@ -179,7 +179,7 @@ TEST_F(HTTPSIncomeMetricTest, EvaluateCalculatesCorrectRPS) {
     EXPECT_EQ("5.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, ConsecutiveEvaluatesWork) {
+TEST_F(HTTPIncomeMetricTest, ConsecutiveEvaluatesWork) {
     for (int i = 0; i < 3; ++i) {
         ++(*metric);
     }
@@ -193,7 +193,7 @@ TEST_F(HTTPSIncomeMetricTest, ConsecutiveEvaluatesWork) {
     EXPECT_EQ("2.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, EvaluateCalculatesIncrementalRequests) {
+TEST_F(HTTPIncomeMetricTest, EvaluateCalculatesIncrementalRequests) {
     metric->Evaluate();
     EXPECT_EQ("0.00", metric->GetValueAsString());
     
@@ -213,11 +213,11 @@ TEST_F(HTTPSIncomeMetricTest, EvaluateCalculatesIncrementalRequests) {
     EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, ResetDoesNotThrow) {
+TEST_F(HTTPIncomeMetricTest, ResetDoesNotThrow) {
     EXPECT_NO_THROW(metric->Reset());
 }
 
-TEST_F(HTTPSIncomeMetricTest, ResetSetsValueToZero) {
+TEST_F(HTTPIncomeMetricTest, ResetSetsValueToZero) {
     for (int i = 0; i < 10; ++i) {
         ++(*metric);
     }
@@ -227,7 +227,7 @@ TEST_F(HTTPSIncomeMetricTest, ResetSetsValueToZero) {
     EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, ResetClearsInternalCounters) {
+TEST_F(HTTPIncomeMetricTest, ResetClearsInternalCounters) {
     for (int i = 0; i < 15; ++i) {
         ++(*metric);
     }
@@ -245,7 +245,7 @@ TEST_F(HTTPSIncomeMetricTest, ResetClearsInternalCounters) {
     EXPECT_EQ("3.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, ConsecutiveResetsWork) {
+TEST_F(HTTPIncomeMetricTest, ConsecutiveResetsWork) {
     for (int i = 0; i < 3; ++i) {
         ++(*metric);
         metric->Evaluate();
@@ -254,7 +254,7 @@ TEST_F(HTTPSIncomeMetricTest, ConsecutiveResetsWork) {
     }
 }
 
-TEST_F(HTTPSIncomeMetricTest, ConcurrentIncrementsAreThreadSafe) {
+TEST_F(HTTPIncomeMetricTest, ConcurrentIncrementsAreThreadSafe) {
     const int num_threads = 4;
     const int requests_per_thread = 1000;
     std::vector<std::thread> threads;
@@ -278,7 +278,7 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentIncrementsAreThreadSafe) {
     EXPECT_EQ(total_expected, actual);
 }
 
-TEST_F(HTTPSIncomeMetricTest, ConcurrentEvaluatesAreThreadSafe) {
+TEST_F(HTTPIncomeMetricTest, ConcurrentEvaluatesAreThreadSafe) {
     const int num_threads = 8;
     std::vector<std::thread> threads;
     std::atomic<int> completed_evaluations{0};
@@ -305,7 +305,7 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentEvaluatesAreThreadSafe) {
     EXPECT_EQ(completed_evaluations.load(), num_threads * 10);
 }
 
-TEST_F(HTTPSIncomeMetricTest, ConcurrentIncrementsAndEvaluates) {
+TEST_F(HTTPIncomeMetricTest, ConcurrentIncrementsAndEvaluates) {
     const int increment_threads = 3;
     const int evaluate_threads = 2;
     const int requests_per_thread = 500;
@@ -345,7 +345,7 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentIncrementsAndEvaluates) {
     EXPECT_TRUE(isValidDoubleString(final_value));
 }
 
-TEST_F(HTTPSIncomeMetricTest, ConcurrentResetAndOperations) {
+TEST_F(HTTPIncomeMetricTest, ConcurrentResetAndOperations) {
     std::vector<std::thread> threads;
     std::atomic<bool> should_stop{false};
     
@@ -384,8 +384,8 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentResetAndOperations) {
     EXPECT_EQ("1.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, WorksThroughIMetricPointer) {
-    std::unique_ptr<IMetric> metric_ptr = std::make_unique<HTTPSIncomeMetric>();
+TEST_F(HTTPIncomeMetricTest, WorksThroughIMetricPointer) {
+    std::unique_ptr<IMetric> metric_ptr = std::make_unique<HTTPIncomeMetric>();
     
     EXPECT_EQ("\"HTTPS requests RPS\"", metric_ptr->GetName());
     
@@ -397,7 +397,7 @@ TEST_F(HTTPSIncomeMetricTest, WorksThroughIMetricPointer) {
     EXPECT_EQ("0.00", metric_ptr->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, HighVolumeIncrementsPerformance) {
+TEST_F(HTTPIncomeMetricTest, HighVolumeIncrementsPerformance) {
     const int num_requests = 100000;
     
     auto start = std::chrono::high_resolution_clock::now();
@@ -413,7 +413,7 @@ TEST_F(HTTPSIncomeMetricTest, HighVolumeIncrementsPerformance) {
     EXPECT_EQ(std::to_string(num_requests) + ".00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, EvaluateCompletesQuickly) {
+TEST_F(HTTPIncomeMetricTest, EvaluateCompletesQuickly) {
     for (int i = 0; i < 1000; ++i) {
         ++(*metric);
     }
@@ -426,7 +426,7 @@ TEST_F(HTTPSIncomeMetricTest, EvaluateCompletesQuickly) {
     EXPECT_LT(duration.count(), 10) << "Evaluate() took too long: " << duration.count() << "ms";
 }
 
-TEST_F(HTTPSIncomeMetricTest, SimulatedHttpRequestsBurst) {
+TEST_F(HTTPIncomeMetricTest, SimulatedHttpRequestsBurst) {
     for (int i = 0; i < 50; ++i) {
         ++(*metric);
     }
@@ -438,7 +438,7 @@ TEST_F(HTTPSIncomeMetricTest, SimulatedHttpRequestsBurst) {
     EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, SimulatedSteadyTraffic) {
+TEST_F(HTTPIncomeMetricTest, SimulatedSteadyTraffic) {
     std::vector<int> request_intervals = {10, 15, 8, 12, 20, 5};
     std::vector<std::string> expected_values = {"10.00", "15.00", "8.00", "12.00", "20.00", "5.00"};
     
@@ -452,7 +452,7 @@ TEST_F(HTTPSIncomeMetricTest, SimulatedSteadyTraffic) {
     }
 }
 
-TEST_F(HTTPSIncomeMetricTest, SimulatedVariableLoad) {
+TEST_F(HTTPIncomeMetricTest, SimulatedVariableLoad) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> request_dist(1, 100);
@@ -478,14 +478,14 @@ TEST_F(HTTPSIncomeMetricTest, SimulatedVariableLoad) {
     }
 }
 
-TEST_F(HTTPSIncomeMetricTest, ZeroRequestsConsistentBehavior) {
+TEST_F(HTTPIncomeMetricTest, ZeroRequestsConsistentBehavior) {
     for (int i = 0; i < 5; ++i) {
         metric->Evaluate();
         EXPECT_EQ("0.00", metric->GetValueAsString()) << "Evaluation " << i << " failed";
     }
 }
 
-TEST_F(HTTPSIncomeMetricTest, LargeNumberOfRequests) {
+TEST_F(HTTPIncomeMetricTest, LargeNumberOfRequests) {
     const unsigned long long large_number = 1000000;
     
     for (unsigned long long i = 0; i < large_number; ++i) {
@@ -499,7 +499,7 @@ TEST_F(HTTPSIncomeMetricTest, LargeNumberOfRequests) {
     EXPECT_EQ(expected.str(), metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, ValueStringFormatConsistency) {
+TEST_F(HTTPIncomeMetricTest, ValueStringFormatConsistency) {
     std::vector<int> test_values = {0, 1, 10, 100, 1000};
     
     for (int value : test_values) {
@@ -521,16 +521,16 @@ TEST_F(HTTPSIncomeMetricTest, ValueStringFormatConsistency) {
     }
 }
 
-class HTTPSIncomeMetricStressTest : public ::testing::Test {
+class HTTPIncomeMetricStressTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        metric = std::make_unique<HTTPSIncomeMetric>();
+        metric = std::make_unique<HTTPIncomeMetric>();
     }
 
-    std::unique_ptr<HTTPSIncomeMetric> metric;
+    std::unique_ptr<HTTPIncomeMetric> metric;
 };
 
-TEST_F(HTTPSIncomeMetricStressTest, HighFrequencyOperations) {
+TEST_F(HTTPIncomeMetricStressTest, HighFrequencyOperations) {
     const int cycles = 100;
     
     for (int cycle = 0; cycle < cycles; ++cycle) {
@@ -550,7 +550,7 @@ TEST_F(HTTPSIncomeMetricStressTest, HighFrequencyOperations) {
     EXPECT_EQ("1.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricStressTest, ConcurrentStressTest) {
+TEST_F(HTTPIncomeMetricStressTest, ConcurrentStressTest) {
     const int num_threads = 10;
     const int operations_per_thread = 1000;
     std::vector<std::thread> threads;
@@ -581,13 +581,13 @@ TEST_F(HTTPSIncomeMetricStressTest, ConcurrentStressTest) {
     EXPECT_EQ(total_operations.load(), num_threads * operations_per_thread);
 }
 
-TEST_F(HTTPSIncomeMetricTest, ConstructorWithMaxValue) {
-    HTTPSIncomeMetric max_metric(ULLONG_MAX);
+TEST_F(HTTPIncomeMetricTest, ConstructorWithMaxValue) {
+    HTTPIncomeMetric max_metric(ULLONG_MAX);
     EXPECT_EQ("0.00", max_metric.GetValueAsString());
     EXPECT_NO_THROW(max_metric.Evaluate());
 }
 
-TEST_F(HTTPSIncomeMetricTest, EvaluateAfterReset) {
+TEST_F(HTTPIncomeMetricTest, EvaluateAfterReset) {
     for (int i = 0; i < 10; ++i) {
         ++(*metric);
     }
@@ -599,7 +599,7 @@ TEST_F(HTTPSIncomeMetricTest, EvaluateAfterReset) {
     EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, MultipleEvaluationsWithoutIncrements) {
+TEST_F(HTTPIncomeMetricTest, MultipleEvaluationsWithoutIncrements) {
     metric->Evaluate();
     EXPECT_EQ("0.00", metric->GetValueAsString());
     
@@ -609,7 +609,7 @@ TEST_F(HTTPSIncomeMetricTest, MultipleEvaluationsWithoutIncrements) {
     }
 }
 
-TEST_F(HTTPSIncomeMetricTest, IncrementBetweenEvaluations) {
+TEST_F(HTTPIncomeMetricTest, IncrementBetweenEvaluations) {
     metric->Evaluate();
     EXPECT_EQ("0.00", metric->GetValueAsString());
     
@@ -625,10 +625,10 @@ TEST_F(HTTPSIncomeMetricTest, IncrementBetweenEvaluations) {
     EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, ChainedIncrements) {
-    HTTPSIncomeMetric& ref1 = ++(*metric);
-    HTTPSIncomeMetric& ref2 = ++ref1;
-    HTTPSIncomeMetric& ref3 = ++ref2;
+TEST_F(HTTPIncomeMetricTest, ChainedIncrements) {
+    HTTPIncomeMetric& ref1 = ++(*metric);
+    HTTPIncomeMetric& ref2 = ++ref1;
+    HTTPIncomeMetric& ref3 = ++ref2;
     
     EXPECT_EQ(&ref1, metric.get());
     EXPECT_EQ(&ref2, metric.get());
@@ -638,7 +638,7 @@ TEST_F(HTTPSIncomeMetricTest, ChainedIncrements) {
     EXPECT_EQ("3.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, MixedIncrementTypes) {
+TEST_F(HTTPIncomeMetricTest, MixedIncrementTypes) {
     ++(*metric);
     (*metric)++;
     ++(*metric);
@@ -648,7 +648,7 @@ TEST_F(HTTPSIncomeMetricTest, MixedIncrementTypes) {
     EXPECT_EQ("4.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, MemoryStability) {
+TEST_F(HTTPIncomeMetricTest, MemoryStability) {
     for (int cycle = 0; cycle < 100; ++cycle) {
         for (int i = 0; i < 1000; ++i) {
             ++(*metric);
@@ -663,7 +663,7 @@ TEST_F(HTTPSIncomeMetricTest, MemoryStability) {
     EXPECT_EQ("1.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, AtomicOperationsConsistency) {
+TEST_F(HTTPIncomeMetricTest, AtomicOperationsConsistency) {
     const int num_operations = 10000;
     
     for (int i = 0; i < num_operations; ++i) {
@@ -677,7 +677,7 @@ TEST_F(HTTPSIncomeMetricTest, AtomicOperationsConsistency) {
     EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, StateConsistencyAfterOperations) {
+TEST_F(HTTPIncomeMetricTest, StateConsistencyAfterOperations) {
     EXPECT_EQ("0.00", metric->GetValueAsString());
     EXPECT_EQ("\"HTTPS requests RPS\"", metric->GetName());
     
@@ -693,7 +693,7 @@ TEST_F(HTTPSIncomeMetricTest, StateConsistencyAfterOperations) {
     EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, ConcurrentReadOperations) {
+TEST_F(HTTPIncomeMetricTest, ConcurrentReadOperations) {
     const int num_threads = 8;
     std::vector<std::thread> threads;
     std::atomic<int> successful_reads{0};
@@ -725,8 +725,8 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentReadOperations) {
     EXPECT_EQ(successful_reads.load(), num_threads * 100);
 }
 
-TEST_F(HTTPSIncomeMetricTest, ExtremeValueHandling) {
-    HTTPSIncomeMetric large_metric(ULLONG_MAX - 1000);
+TEST_F(HTTPIncomeMetricTest, ExtremeValueHandling) {
+    HTTPIncomeMetric large_metric(ULLONG_MAX - 1000);
     
     for (int i = 0; i < 100; ++i) {
         EXPECT_NO_THROW(++large_metric);
@@ -738,7 +738,7 @@ TEST_F(HTTPSIncomeMetricTest, ExtremeValueHandling) {
     EXPECT_TRUE(hasCorrectPrecision(value));
 }
 
-TEST_F(HTTPSIncomeMetricTest, RapidResetOperations) {
+TEST_F(HTTPIncomeMetricTest, RapidResetOperations) {
     for (int i = 0; i < 1000; ++i) {
         ++(*metric);
         metric->Evaluate();
@@ -747,7 +747,7 @@ TEST_F(HTTPSIncomeMetricTest, RapidResetOperations) {
     }
 }
 
-TEST_F(HTTPSIncomeMetricTest, ComplexWorkloadSimulation) {
+TEST_F(HTTPIncomeMetricTest, ComplexWorkloadSimulation) {
     std::vector<int> traffic_pattern = {
         0, 10, 50, 100, 200, 150, 75, 25, 5, 0,
         100, 100, 100, 100, 100,
@@ -768,7 +768,7 @@ TEST_F(HTTPSIncomeMetricTest, ComplexWorkloadSimulation) {
     }
 }
 
-TEST_F(HTTPSIncomeMetricTest, InterleavedOperations) {
+TEST_F(HTTPIncomeMetricTest, InterleavedOperations) {
     for (int cycle = 0; cycle < 10; ++cycle) {
         for (int i = 0; i < 5; ++i) {
             ++(*metric);
@@ -791,7 +791,7 @@ TEST_F(HTTPSIncomeMetricTest, InterleavedOperations) {
     }
 }
 
-TEST_F(HTTPSIncomeMetricTest, AtomicIncrementConsistency) {
+TEST_F(HTTPIncomeMetricTest, AtomicIncrementConsistency) {
     const int num_threads = 16;
     const int increments_per_thread = 1000;
     std::vector<std::thread> threads;
@@ -813,7 +813,7 @@ TEST_F(HTTPSIncomeMetricTest, AtomicIncrementConsistency) {
     EXPECT_EQ(std::to_string(expected_total) + ".00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, ConcurrentEvaluateAndIncrement) {
+TEST_F(HTTPIncomeMetricTest, ConcurrentEvaluateAndIncrement) {
     std::atomic<bool> start_flag{false};
     std::atomic<int> evaluation_count{0};
     std::vector<std::thread> threads;
@@ -853,8 +853,8 @@ TEST_F(HTTPSIncomeMetricTest, ConcurrentEvaluateAndIncrement) {
     EXPECT_TRUE(isValidDoubleString(value));
 }
 
-TEST_F(HTTPSIncomeMetricTest, OverflowHandling) {
-    HTTPSIncomeMetric overflow_metric(ULLONG_MAX - 10);
+TEST_F(HTTPIncomeMetricTest, OverflowHandling) {
+    HTTPIncomeMetric overflow_metric(ULLONG_MAX - 10);
     
     for (int i = 0; i < 5; ++i) {
         EXPECT_NO_THROW(++overflow_metric);
@@ -866,7 +866,7 @@ TEST_F(HTTPSIncomeMetricTest, OverflowHandling) {
     EXPECT_GE(std::stod(value), 0.0);
 }
 
-TEST_F(HTTPSIncomeMetricTest, ZeroToNonZeroTransition) {
+TEST_F(HTTPIncomeMetricTest, ZeroToNonZeroTransition) {
     for (int i = 0; i < 10; ++i) {
         metric->Evaluate();
         EXPECT_EQ("0.00", metric->GetValueAsString());
@@ -880,7 +880,7 @@ TEST_F(HTTPSIncomeMetricTest, ZeroToNonZeroTransition) {
     EXPECT_EQ("0.00", metric->GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, DecimalPrecisionEdgeCases) {
+TEST_F(HTTPIncomeMetricTest, DecimalPrecisionEdgeCases) {
     std::vector<int> test_values = {1, 9, 10, 99, 100, 999, 1000, 9999, 10000};
     
     for (int value : test_values) {
@@ -901,10 +901,10 @@ TEST_F(HTTPSIncomeMetricTest, DecimalPrecisionEdgeCases) {
     }
 }
 
-TEST_F(HTTPSIncomeMetricTest, MultipleInstancesIndependence) {
-    HTTPSIncomeMetric metric1;
-    HTTPSIncomeMetric metric2(100);
-    HTTPSIncomeMetric metric3(50);
+TEST_F(HTTPIncomeMetricTest, MultipleInstancesIndependence) {
+    HTTPIncomeMetric metric1;
+    HTTPIncomeMetric metric2(100);
+    HTTPIncomeMetric metric3(50);
     
     ++metric1;
     for (int i = 0; i < 5; ++i) {
@@ -928,8 +928,8 @@ TEST_F(HTTPSIncomeMetricTest, MultipleInstancesIndependence) {
     EXPECT_EQ("3.00", metric3.GetValueAsString());
 }
 
-TEST_F(HTTPSIncomeMetricTest, MetricConceptCompliance) {
-    HTTPSIncomeMetric test_metric;
+TEST_F(HTTPIncomeMetricTest, MetricConceptCompliance) {
+    HTTPIncomeMetric test_metric;
     
     std::ostringstream oss;
     oss << test_metric;
@@ -939,7 +939,7 @@ TEST_F(HTTPSIncomeMetricTest, MetricConceptCompliance) {
     EXPECT_TRUE(output.find("0.00") != std::string::npos);
 }
 
-TEST_F(HTTPSIncomeMetricTest, ComprehensiveIntegrationTest) {
+TEST_F(HTTPIncomeMetricTest, ComprehensiveIntegrationTest) {
     const int phases = 5;
     const int operations_per_phase = 100;
     

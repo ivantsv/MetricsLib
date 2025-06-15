@@ -7,10 +7,8 @@
 
 namespace Metrics {
     
-    class IMetric {
-    public:
-        using tag = MetricTags::DefaultMetricTag;
-    
+    class IMetric : public MetricTags::DefaultMetricTag {
+    public:    
         IMetric() = default;
         virtual ~IMetric() = default;
         virtual std::string GetName() const = 0;

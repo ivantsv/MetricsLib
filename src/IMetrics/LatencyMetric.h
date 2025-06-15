@@ -7,10 +7,8 @@
 #include <mutex>
 
 namespace Metrics {
- class LatencyMetric final : public IMetric {
+ class LatencyMetric final : public IMetric, public MetricTags::ComputerMetricTag {
  public:
-    using tag = MetricTags::ComputerMetricTag;
- 
     LatencyMetric();
     ~LatencyMetric() override;
     std::string GetName() const noexcept override;

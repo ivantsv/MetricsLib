@@ -15,6 +15,7 @@ add_library(
     NonBlockingWriter
     MultiThreadWriter/Writer.cpp
     MultiThreadWriter/Writer.h
+    MultiThreadWriter/MultiThreadWriter.h
 )
 
 add_library(
@@ -37,6 +38,8 @@ add_library(
     IMetrics/MyAny.h
     IMetrics/CardinalityMetricValue.h
     IMetrics/MetricsTags.h
+    IMetrics/Metrics.h
+    MetricsManager/MetricsManager.h
 )
 
 target_include_directories(

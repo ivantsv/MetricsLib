@@ -156,6 +156,35 @@ target_link_libraries(
 
 target_include_directories(cardinality_value_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
+add_executable(
+    metrics_manager_tests
+    metrics_manager_tests.cpp
+)
+
+target_link_libraries(
+    metrics_manager_tests
+    GTest::gtest_main
+    GTest::gmock_main
+    IMetrics
+    NonBlockingWriter
+)
+
+target_include_directories(metrics_manager_tests PRIVATE ${PROJECT_SOURCE_DIR}/src)
+
+add_executable(
+    simple_test
+    simple_test.cpp
+)
+
+target_link_libraries(
+    simple_test
+    GTest::gtest_main
+    IMetrics
+    NonBlockingWriter
+)
+
+target_include_directories(simple_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
+
 include(GoogleTest)
 
 gtest_discover_tests(cpu_metric_tests)
@@ -168,3 +197,5 @@ gtest_discover_tests(increment_metric_tests)
 gtest_discover_tests(my_any_tests)
 gtest_discover_tests(cardinality_metric_any_tests)
 gtest_discover_tests(cardinality_value_tests)
+gtest_discover_tests(metrics_manager_tests)
+gtest_discover_tests(simple_test)

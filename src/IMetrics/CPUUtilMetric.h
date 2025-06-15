@@ -5,7 +5,7 @@
 #include <mutex>
 
 namespace Metrics {
-    class CPUMetric final : public IMetric {
+    class CPUMetric final : public IMetric, public MetricTags::ComputerMetricTag {
     private:
         double current_utilization_;
         int cpu_count_;
@@ -21,8 +21,6 @@ namespace Metrics {
     #endif
         
     public:
-        using tag = MetricTags::ComputerMetricTag;
-    
         CPUMetric();
         std::string GetName() const noexcept override;
         std::string GetValueAsString() const override;
